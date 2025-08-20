@@ -1,0 +1,10 @@
+# Node.js / React
+node_modules/
+dist/
+.vscode/
+.env
+
+# Go
+bin/
+*.exe
+*.out

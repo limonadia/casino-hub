@@ -1,0 +1,59 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: Simple casino games backend in Go with MySQL
+  title: Casino Hub API
+  version: "1.0"
+paths:
+  /api/balance:
+    get:
+      description: Returns current user balance
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      summary: Get balance
+      tags:
+      - balance
+  /api/reset:
+    post:
+      description: Resets user balance to 1000
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      summary: Reset balance
+      tags:
+      - balance
+  /api/slot:
+    post:
+      description: Deducts 100, 20% chance win 500
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Play slot machine
+      tags:
+      - games
+swagger: "2.0"
