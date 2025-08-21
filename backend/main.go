@@ -1,5 +1,4 @@
 package main
-import _ "casino-hub/backend/docs"
 
 import (
     "database/sql"

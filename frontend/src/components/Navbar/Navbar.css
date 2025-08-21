@@ -1,0 +1,12 @@
+.active-link{
+    color: var(--color-casinoPink);
+}
+
+.bg-background-darker{
+    z-index: 4;
+    box-shadow: 4px 20px 9px 1px rgb(42 40 40 / 10%), 0 2px 4px -2px rgb(88 87 87 / 10%);
+}
+
+.nav-menu-button{
+    width: 40px !important;
+}
