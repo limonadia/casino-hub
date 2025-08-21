@@ -1,7 +1,9 @@
+@import "tailwindcss";
+
 #root {
-  max-width: 1280px;
+  width: 100vw;
+  height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -39,4 +41,14 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.page{
+  padding: 2rem;
+}
+
+@media (max-width: 450px){
+  .page{
+    padding: 1rem;
+  }
 }
