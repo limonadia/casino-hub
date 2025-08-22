@@ -7,6 +7,7 @@ import jackpot from "../../assets/jackpot.webp";
 import slot1 from "../../assets/slot1.webp";
 import slot2 from "../../assets/slots.png";
 import slot3 from "../../assets/slot3.png";
+import ButtonComponent from '../Button/Button';
 
 interface CarouselProps {
   children?: ReactNode;
@@ -34,10 +35,10 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
         ))}
       </div>
       
-      <button onClick={prevSlide} className="absolute top-1/2 left-4 -translate-y-1/2 bg-gray-800 text-white opacity-70 p-2 hover:opacity-100 transition hidden md:block">
+      <button onClick={prevSlide} className="absolute top-1/2  -translate-y-1/2 bg-gray-800 text-white opacity-70 p-2 hover:opacity-100 transition hidden md:block">
         &#9664;
       </button>
-      <button onClick={nextSlide} className="absolute top-1/2 right-4 -translate-y-1/2 bg-gray-800 text-white opacity-70 p-2 hover:opacity-100 transition hidden md:block">
+      <button onClick={nextSlide} className="absolute top-1/2 right-0 -translate-y-1/2 bg-gray-800 text-white opacity-70 p-2 hover:opacity-100 transition hidden md:block">
         &#9654;
       </button>
 
@@ -65,15 +66,27 @@ function Gallery() {
         <div className="flex justify-center items-center bg-background-lighter w-full image-div">
             <div className="w-full h-full  rounded-lg overflow-hidden">
                 <Carousel>
-                    {images.map((image, index) => (
-                        <div key={index} className="w-full h-full shadow-none" >
-                            <img
-                                src={image.src}
-                                alt={image.alt}
-                                className="object-cover w-full h-auto"
-                            />
+                  {images.map((image, index) => (
+                    <div key={index} className="w-full h-full shadow-none relative flex items-start">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="object-cover w-full h-auto"
+                      />
+
+                      {index === 0 && ( 
+                        <div className="absolute top-1/9 left-8 bg-black/70 p-6 rounded-lg text-white max-w-md overlay-box">
+                          <h2 className="text-casinoPink text-xl font-bold mb-2">
+                            The Bonus Vault is Open!
+                          </h2>
+                          <p className="text-sm mb-4">
+                            Step in now and claim your exclusive rewards. Massive bonuses are waiting just for you!
+                          </p>
+                          <ButtonComponent buttonText="Win Free Coins" />
                         </div>
-                    ))}
+                      )}
+                    </div>
+                  ))}
                 </Carousel>
             </div>
         </div>
