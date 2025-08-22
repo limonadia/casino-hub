@@ -18,6 +18,14 @@ img{
     .image-div{
         aspect-ratio: 4/2;
     }
+
+    .overlay-box{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 350px !important;
+    }
 }
 
 @media (min-width: 981px){
@@ -64,3 +72,23 @@ img{
   .overlay-box {
     width: 350px !important;
     }
+
+
+    @media (max-width: 549px) {
+        .overlay-box {
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 180px !important;
+          padding: 6px;
+          font-size: 0.8rem;
+        }
+      
+        .overlay-box h2 {
+          font-size: 1rem;
+        }
+      
+        .overlay-box p {
+          font-size: 0.75rem; 
+        }
+      }

@@ -56,6 +56,12 @@ html, body, #root {
   }
 }
 
+@media (min-width: 1500px){
+  .page {
+  max-width: 1500px;
+}
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -72,6 +78,8 @@ html, body, #root {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
+  display: flex;
+  justify-content: center;
 }
 
 .ps-sidebar-root {
