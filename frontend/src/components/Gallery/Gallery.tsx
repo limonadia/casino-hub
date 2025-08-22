@@ -8,9 +8,6 @@ import slot1 from "../../assets/slot1.webp";
 import slot2 from "../../assets/slots.png";
 import slot3 from "../../assets/slot3.png";
 
-
-
-
 interface CarouselProps {
   children?: ReactNode;
 }
@@ -37,18 +34,20 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
         ))}
       </div>
       
-      <button onClick={prevSlide} className="absolute top-1/2 left-4 -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-70 hover:opacity-100 transition w-10">
+      <button onClick={prevSlide} className="absolute top-1/2 left-4 -translate-y-1/2 bg-gray-800 text-white opacity-70 p-2 hover:opacity-100 transition hidden md:block">
         &#9664;
       </button>
-      <button onClick={nextSlide} className="absolute top-1/2 right-4 -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-70 hover:opacity-100 transition w-10">
+      <button onClick={nextSlide} className="absolute top-1/2 right-4 -translate-y-1/2 bg-gray-800 text-white opacity-70 p-2 hover:opacity-100 transition hidden md:block">
         &#9654;
       </button>
 
-      {/* <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex space-x-2">
-        {React.Children.map(children, (_, index) => (
-          <button key={index} onClick={() => setCurrentSlide(index)} className={`w-3 h-3 rounded-full ${index === currentSlide ? 'bg-pink-500' : 'bg-gray-400'}`}/>
-        ))}
-      </div> */}
+      <button onClick={prevSlide} className="carousel-previous carousel-button">
+        &#9664;
+      </button>
+      <button onClick={nextSlide} className="carousel-next carousel-button">
+        &#9654;
+      </button>
+
     </div>
   );
 };
@@ -63,11 +62,11 @@ function Gallery() {
     ]);
 
     return (
-        <div className="flex justify-center items-center bg-background-lighter w-full h-1/2">
-            <div className="w-full h-full shadow-lg rounded-lg overflow-hidden">
+        <div className="flex justify-center items-center bg-background-lighter w-full image-div">
+            <div className="w-full h-full  rounded-lg overflow-hidden">
                 <Carousel>
                     {images.map((image, index) => (
-                        <div key={index}>
+                        <div key={index} className="w-full h-full shadow-none" >
                             <img
                                 src={image.src}
                                 alt={image.alt}
