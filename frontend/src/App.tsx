@@ -5,10 +5,15 @@ import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home/Home';
 import Games from './pages/Games/Games';
 import Profile from './pages/Profile/Profile';
-import SlotMachine from './pages/Games/SlotMachine';
-import Blackjack from './pages/Games/BlackJack';
-import Roulette from './pages/Games/Roulette';
+import SlotMachine from './pages/Games/SlotMachine/SlotMachine';
+import BlackjackGame from './pages/Games/BlackJack/BlackJack';
+import Roulette from './pages/Games/Roulette/Roulette';
 import SideBarComponent from './components/Sidebar/SidebarComponent';
+import BaccaratGame from './pages/Games/Baccarat/BaccaratGame';
+import ProgressiveSlot from './pages/Games/ProgressiveSlot/ProgressiveSlot';
+import Keno from './pages/Games/Keno/Keno';
+import ScratchGame from './pages/Games/Scratch/ScratchCard';
+import UpgradedHighLowGame from './pages/Games/HighLow/HighLowGame';
 
 function App() {
   const [balance, setBalance] = useState(1000);
@@ -25,9 +30,14 @@ return (
               <Route path="/" element={<Home />} />
               <Route path="/games" element={<Games />} />
               <Route path="/profile" element={<Profile balance={balance} setBalance={setBalance} />} />
-              <Route path="/games/slot" element={<SlotMachine balance={balance} setBalance={setBalance} />} />
-              <Route path="/games/blackjack" element={<Blackjack />} />
+              <Route path="/games/slot" element={<SlotMachine/>} />
+              <Route path="/games/blackjack" element={<BlackjackGame />} />
               <Route path="/games/roulette" element={<Roulette />} />
+              <Route path="/games/baccarat" element={<BaccaratGame />} />
+              <Route path="/games/progressive-slot" element={<ProgressiveSlot />} />
+              <Route path="/games/keno" element={<Keno />} />
+              <Route path="/games/scratch" element={<ScratchGame />} />
+              <Route path="/games/high-low" element={<UpgradedHighLowGame />} />
             </Routes>
           </main>
         </div>
