@@ -3,10 +3,17 @@ import Balance from "../Balance/Balance";
 import { useState } from "react";
 import './Navbar.css';
 import LanguageSelect from "../LanguageSelect/LanguageSelect";
+import ButtonComponent from "../Button/Button";
+import { useNavigate } from "react-router-dom";
 
 function Navbar({ balance }: { balance: number }) {
     const [open, setOpen] = useState(false);
     const linkClasses = ({ isActive }: {isActive: boolean}) => isActive ? "active-link" : "";
+    const navigate = useNavigate();
+
+    const toLogin = () => {
+        navigate("/login"); 
+      };
     
 return (
     <div className="p-4 bg-background-darker">
@@ -19,6 +26,7 @@ return (
             <div className="flex gap-6 items-center">
                 <LanguageSelect/>
                 <Balance balance={balance}/>
+                <ButtonComponent buttonText={"Login"} onClick={toLogin}/>
             </div>
         </div>
 

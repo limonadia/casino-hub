@@ -245,6 +245,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "password": {
+                    "type": "string"
+                },
                 "score": {
                     "type": "integer"
                 },

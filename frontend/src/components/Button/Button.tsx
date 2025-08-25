@@ -23,12 +23,13 @@ const StyledButton = styled(Button)({
 
 interface ButtonProperties {
     buttonText: string;
+    onClick?: () => void;
 }
 
-function ButtonComponent({buttonText}: ButtonProperties){
+function ButtonComponent({buttonText, onClick}: ButtonProperties){
     return(
         <>
-            <StyledButton variant="contained">
+            <StyledButton variant="contained" onClick={onClick}>
                 {buttonText}
             </StyledButton>
         </>

@@ -5,6 +5,7 @@ import (
 	"casino-hub/backend/models"
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -31,32 +32,55 @@ type Claims struct {
 // @Failure 500 {string} string "Database error"
 // @Router /api/auth/signup [post]
 func Signup(w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
+    var user models.User
+    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+        http.Error(w, "Invalid request", http.StatusBadRequest)
+        return
+    }
 
-	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		http.Error(w, "Error hashing password", http.StatusInternalServerError)
-		return
-	}
+    // Validate required fields
+    if user.Username == "" || user.Email == "" || user.Password == "" {
+        http.Error(w, "Username, email, and password are required", http.StatusBadRequest)
+        return
+    }
 
-	res, err := database.DB.Exec("INSERT INTO users (username, email, password, created_at, balance) VALUES (?, ?, ?, NOW(), 5000)",
-		user.Username, user.Email, string(hashed))
-	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
-	}
+    // Check duplicates
+    var exists int
+    err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE username=? OR email=?", user.Username, user.Email).Scan(&exists)
+    if err != nil {
+        http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+        return
+    }
+    if exists > 0 {
+        http.Error(w, "Username or email already exists", http.StatusBadRequest)
+        return
+    }
 
-	id, _ := res.LastInsertId()
-	user.ID = int(id)
-	user.Password = ""
+    // Hash password
+    hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+    if err != nil {
+        http.Error(w, "Error hashing password", http.StatusInternalServerError)
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+    // Insert user
+    res, err := database.DB.Exec(
+        "INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES (?, ?, ?, 5000, 0, 1, 0, 0)",
+        user.Username, user.Email, string(hashed),
+    )
+    if err != nil {
+        http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    id, _ := res.LastInsertId()
+    user.ID = int(id)
+    user.Password = "" // never return password
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(user)
 }
+
 
 
 
@@ -86,11 +110,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	row := database.DB.QueryRow("SELECT id, password FROM users WHERE email = ?", creds.Email)
 	if err := row.Scan(&user.ID, &user.Password); err != nil {
+		log.Println("Login failed: user not found for email:", creds.Email)
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
 
+	// Debug logs for password
+	log.Println("Login attempt for:", creds.Email)
+	log.Println("Password from frontend:", creds.Password)
+	log.Println("Hashed password from DB:", user.Password)
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
+		log.Println("Password comparison failed:", err)
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
@@ -115,6 +146,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"token": tokenString,
 	})
 }
+
 
 
 
