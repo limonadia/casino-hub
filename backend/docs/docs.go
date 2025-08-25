@@ -15,72 +15,74 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/balance": {
-            "get": {
-                "description": "Returns current user balance",
+        "/api/auth/login": {
+            "post": {
+                "description": "Logs in a user with email and password, returns a JWT token.",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "balance"
+                    "auth"
                 ],
-                "summary": "Get balance",
+                "summary": "Authenticate user",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "token",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
-                                "type": "integer"
+                                "type": "string"
                             }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/reset": {
-            "post": {
-                "description": "Resets user balance to 1000",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "balance"
-                ],
-                "summary": "Reset balance",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "integer"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/slot": {
-            "post": {
-                "description": "Deducts 100, 20% chance win 500",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "games"
-                ],
-                "summary": "Play slot machine",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Could not create token",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "description": "Logs out a user (client should just discard the token).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout user",
+                "responses": {
+                    "200": {
+                        "description": "message",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -88,6 +90,166 @@ const docTemplate = `{
                             }
                         }
                     }
+                }
+            }
+        },
+        "/api/auth/signup": {
+            "post": {
+                "description": "Creates a new user account with username, email, and password. Initial balance is 5000.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User signup details",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/slot/spin": {
+            "post": {
+                "description": "Spins slot with bet amount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "slot"
+                ],
+                "summary": "Spin slot machine",
+                "parameters": [
+                    {
+                        "description": "Spin Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SpinRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SpinResult"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.SpinRequest": {
+            "type": "object",
+            "properties": {
+                "betAmount": {
+                    "type": "integer"
+                },
+                "playerId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SpinResult": {
+            "type": "object",
+            "properties": {
+                "jackpotWin": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "multiplier": {
+                    "type": "number"
+                },
+                "newBalance": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "symbols": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "winAmount": {
+                    "type": "integer"
+                },
+                "winType": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "experience": {
+                    "type": "integer"
+                },
+                "freeSpins": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastActive": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }
