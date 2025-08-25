@@ -21,7 +21,7 @@ const Reel: React.FC<ReelProps> = ({ symbol, spinning, stopDelay = 0, highlightI
         height: 100,
         overflow: 'hidden',
         borderRadius: 8,
-        backgroundColor: '#111',
+        background: 'var(--color-background-lighter)',
         border: '3px solid #0ff',
         boxShadow: '0 0 10px #0ff, 0 0 20px #0ff inset',
         margin: '0 5px',

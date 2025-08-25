@@ -16,6 +16,7 @@
         "esbuild": "^0.25.9",
         "fast-average-color": "^9.5.0",
         "framer-motion": "^12.23.12",
+        "lucide-react": "^0.541.0",
         "react": "^19.1.1",
         "react-confetti": "^6.4.0",
         "react-dom": "^19.1.1",

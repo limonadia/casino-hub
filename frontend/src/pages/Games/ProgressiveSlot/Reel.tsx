@@ -52,7 +52,7 @@ const Reel: React.FC<ReelPropsExtended> = ({ symbols, spinning, stopIndex, onSto
             textShadow: spinning ? '0 0 20px #0ff' : '0 0 5px #0ff',
             filter: spinning ? 'blur(2px)' : 'none',
             transition: 'filter 0.2s, text-shadow 0.2s',
-            background: '#111',
+            background: 'var(--color-background-lighter)',
           }}
         >
           {s.name}

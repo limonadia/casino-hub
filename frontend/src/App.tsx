@@ -14,6 +14,8 @@ import ProgressiveSlot from './pages/Games/ProgressiveSlot/ProgressiveSlot';
 import Keno from './pages/Games/Keno/Keno';
 import ScratchGame from './pages/Games/Scratch/ScratchCard';
 import UpgradedHighLowGame from './pages/Games/HighLow/HighLowGame';
+import CasinoRoulette from './pages/Games/Roulette/Roulette';
+import ApiIntegration from './api/ApiIntegration';
 
 function App() {
   const [balance, setBalance] = useState(1000);
@@ -32,7 +34,7 @@ return (
               <Route path="/profile" element={<Profile balance={balance} setBalance={setBalance} />} />
               <Route path="/games/slot" element={<SlotMachine/>} />
               <Route path="/games/blackjack" element={<BlackjackGame />} />
-              <Route path="/games/roulette" element={<Roulette />} />
+              <Route path="/games/roulette" element={<CasinoRoulette />} />
               <Route path="/games/baccarat" element={<BaccaratGame />} />
               <Route path="/games/progressive-slot" element={<ProgressiveSlot />} />
               <Route path="/games/keno" element={<Keno />} />
