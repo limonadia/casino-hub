@@ -16,6 +16,11 @@ import UpgradedHighLowGame from './pages/Games/HighLow/HighLowGame';
 import CasinoRoulette from './pages/Games/Roulette/Roulette';
 import Login from './pages/Login/Login';
 import Signup from './pages/Login/Signup';
+import ProtectedRoute from './services/ProtectedRoute';
+import Contact from './pages/Contact/Contact';
+import Promotions from './pages/Promotions/Promotions';
+import Recent from './pages/Recent/Recent';
+import Favourites from './pages/Favourites/Favourites';
 
 function App() {
   const [balance, setBalance] = useState(1000);
@@ -31,15 +36,22 @@ return (
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/games" element={<Games />} />
-              <Route path="/profile" element={<Profile balance={balance} setBalance={setBalance} />} />
-              <Route path="/games/slot" element={<SlotMachine/>} />
-              <Route path="/games/blackjack" element={<BlackjackGame />} />
-              <Route path="/games/roulette" element={<CasinoRoulette />} />
-              <Route path="/games/baccarat" element={<BaccaratGame />} />
-              <Route path="/games/progressive-slot" element={<ProgressiveSlot />} />
-              <Route path="/games/keno" element={<Keno />} />
-              <Route path="/games/scratch" element={<ScratchGame />} />
-              <Route path="/games/high-low" element={<UpgradedHighLowGame />} />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile balance={balance} setBalance={setBalance} />
+                </ProtectedRoute>}/>
+              <Route path="/games/slot" element={<ProtectedRoute><SlotMachine/></ProtectedRoute>} />
+              <Route path="/games/blackjack" element={<ProtectedRoute><BlackjackGame /></ProtectedRoute>} />
+              <Route path="/games/roulette" element={<ProtectedRoute><CasinoRoulette /></ProtectedRoute>} />
+              <Route path="/games/baccarat" element={<ProtectedRoute><BaccaratGame /></ProtectedRoute>} />
+              <Route path="/games/progressive-slot" element={<ProtectedRoute><ProgressiveSlot /></ProtectedRoute>} />
+              <Route path="/games/keno" element={<ProtectedRoute><Keno /></ProtectedRoute>} />
+              <Route path="/games/scratch" element={<ProtectedRoute><ScratchGame /></ProtectedRoute>} />
+              <Route path="/games/high-low" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
+              <Route path="/favourite" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
+              <Route path="/recent" element={<ProtectedRoute><Recent/></ProtectedRoute>} />
+              <Route path="/promotions" element={<ProtectedRoute><Promotions/></ProtectedRoute>} />
+              <Route path="/contact" element={<Contact/>}/>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
             </Routes>
