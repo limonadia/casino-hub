@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import Balance from "../Balance/Balance";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import './Navbar.css';
 import LanguageSelect from "../LanguageSelect/LanguageSelect";
 import ButtonComponent from "../Button/Button";

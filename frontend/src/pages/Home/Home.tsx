@@ -4,8 +4,11 @@ import slot3 from "../../assets/slot3.png";
 import slot2 from "../../assets/slot1.webp";
 import casino from "../../assets/closeup-slot-machine-with-pink-blue-lights_1282444-127645.avif"
 import BannerCard from "../../components/BannerCard/BannerCard";
+import { useTranslation } from "react-i18next";
 
 function Home() {
+    const { t } = useTranslation();
+
     return (
         <>
         <div className="text-center page lg:mx-10 h-full">
@@ -14,7 +17,7 @@ function Home() {
                 <RedirectCard imgSrc={slot3} description="Explore our growing range of top-tier games designed to thrill and keep you entertained around the clock." buttonText="Go to Casino"/>
                 <RedirectCard imgSrc={slot2} description="Spin the reels, chase jackpots, and experience nonstop excitement with every play." buttonText="Play Now"/>
             </div>
-            <BannerCard imgSrc={casino} description="Signup now and grab 1000 free Coins!" buttonText="Signup"/>
+            <BannerCard imgSrc={casino} description="Signup now and grab 1000 free Coins!" buttonText={t("Signup")}/>
         </div></>
     );
     }

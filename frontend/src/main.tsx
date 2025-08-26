@@ -6,6 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { NotificationProvider } from './services/notificationContext.tsx';
 import { Notifications } from './components/Notification/Notifications.tsx';
 import { AuthProvider } from './services/authContext.tsx';
+import "./i18n";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
