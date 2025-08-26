@@ -3,14 +3,22 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import ButtonComponent from '../Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 interface props {
     imgSrc: string;
     description: string;
-    buttonText: string
+    buttonText: string;
+    link?: string;
   }
 
-function BannerCard({imgSrc, buttonText, description}: props){
+function BannerCard({imgSrc, buttonText, description, link}: props){
+    const navigate = useNavigate();
+    const redirect = () => {
+        if(link){
+            navigate(link)
+        }
+    }
     return(
         <>
             <Card sx={{ width: '100%', height:150, borderRadius: '15px' }}>
@@ -26,7 +34,7 @@ function BannerCard({imgSrc, buttonText, description}: props){
                         {description}
                     </Typography>
                     <div className='flex w-1/4 flex-col items-start'>
-                    <ButtonComponent buttonText={buttonText}/>
+                    <ButtonComponent buttonText={buttonText} onClick={redirect}/>
                     </div>
                     </CardContent>
                 </CardActionArea>

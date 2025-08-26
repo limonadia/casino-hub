@@ -8,6 +8,7 @@ import slot1 from "../../assets/slot1.webp";
 import slot2 from "../../assets/slots.png";
 import slot3 from "../../assets/slot3.png";
 import ButtonComponent from '../Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 interface CarouselProps {
   children?: ReactNode;
@@ -54,6 +55,7 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
 };
 
 function Gallery() {
+  const navigate = useNavigate();
     const [images] = useState([
         { src: casinoPink, alt: 'Casino' },
         { src: jackpot, alt: 'Jackpot' },
@@ -61,6 +63,10 @@ function Gallery() {
         { src: slot2, alt: 'Slot' },
         { src: slot3, alt: 'Slot' },
     ]);
+
+    const toPromotions = () =>{
+      navigate("/promotions");
+    }
 
     return (
         <div className="flex justify-center items-center bg-background-lighter w-full image-div">
@@ -82,7 +88,7 @@ function Gallery() {
                           <p className="text-sm mb-4">
                             Step in now and claim your exclusive rewards. Massive bonuses are waiting just for you!
                           </p>
-                          <ButtonComponent buttonText="Win Free Coins" />
+                          <ButtonComponent buttonText="Win Free Coins" onClick={toPromotions} />
                         </div>
                       )}
                     </div>

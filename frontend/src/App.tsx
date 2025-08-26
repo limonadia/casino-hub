@@ -50,7 +50,7 @@ return (
               <Route path="/games/high-low" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
               <Route path="/favourite" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
               <Route path="/recent" element={<ProtectedRoute><Recent/></ProtectedRoute>} />
-              <Route path="/promotions" element={<ProtectedRoute><Promotions/></ProtectedRoute>} />
+              <Route path="/promotions" element={<Promotions/>} />
               <Route path="/contact" element={<Contact/>}/>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

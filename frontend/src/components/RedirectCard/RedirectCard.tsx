@@ -4,13 +4,23 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import ButtonComponent from '../Button/Button';
+import { useNavigate } from 'react-router-dom';
 interface RedirectCardProps {
     imgSrc: string;
     description: string;
-    buttonText: string
+    buttonText: string;
+    link?: string;
   }
 
-function RedirectCard({ imgSrc, description, buttonText }: RedirectCardProps) {
+function RedirectCard({ imgSrc, description, buttonText, link }: RedirectCardProps) {
+
+  const navigate = useNavigate();
+  const redirect = () => {
+    if(link){
+      navigate(link)
+    }
+  }
+
   return (
     <Card sx={{ width: '100%', height:320, background: 'var(--color-backgroound-darker)', borderRadius: '15px' }}>
       <CardActionArea sx={{ height: '100%'}}>
@@ -38,7 +48,7 @@ function RedirectCard({ imgSrc, description, buttonText }: RedirectCardProps) {
             }}>
             {description}
           </Typography>
-          <ButtonComponent buttonText={buttonText}/>
+          <ButtonComponent buttonText={buttonText} onClick={redirect}/>
         </CardContent>
       </CardActionArea>
     </Card>
