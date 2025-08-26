@@ -1,17 +1,32 @@
 import { NavLink } from "react-router-dom";
 import Balance from "../Balance/Balance";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './Navbar.css';
 import LanguageSelect from "../LanguageSelect/LanguageSelect";
 import ButtonComponent from "../Button/Button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/authContext";
+import { userService } from "../../services/userService";
 
-function Navbar({ balance }: { balance: number }) {
+function Navbar() {
     const { token } = useAuth();
+    const [balance, setBalance] = useState<number>(0);
     const [open, setOpen] = useState(false);
     const linkClasses = ({ isActive }: {isActive: boolean}) => isActive ? "active-link" : "";
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchBalance = async () => {
+            try {
+                const user = await userService.getProfile();
+                setBalance(user.balance);
+            } catch (err) {
+                console.error("Error fetching balance:", err);
+            }
+        };
+        if (token) fetchBalance();
+    }, [token]);
+    
 
     const toLogin = () => {
         navigate("/login"); 

@@ -6,9 +6,14 @@ export interface User extends BaseModel{
     email: string;
     name?: string;
     score?: number;
-    balance?: number;
+    balance: number;
     experience?: number;
     freeSpins?: number;
     lastActive?: Date;
     password: string;
+    lastFreeCoins?: string;
 }
+
+export interface LoginResponse {
+    token: string;
+  }

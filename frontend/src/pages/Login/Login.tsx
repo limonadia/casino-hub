@@ -65,7 +65,7 @@ import { useAuth } from "../../services/authContext";
         setErrors({});
         try {
             const response = await authService.login({ email, password });
-            localStorage.setItem("token", String(response));
+            localStorage.setItem("token",response.token);
             setToken(String(response));
             navigate("/");
         } catch (err: any) {

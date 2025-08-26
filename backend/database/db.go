@@ -11,7 +11,7 @@ var DB *sql.DB
 
 func InitDB() {
 	var err error
-	dsn := "casino_user:password123@tcp(127.0.0.1:3306)/casino_hub"
+	dsn := "casino_user:password123@tcp(127.0.0.1:3306)/casino_hub?parseTime=true"
 	DB, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)

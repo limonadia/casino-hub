@@ -1,4 +1,4 @@
-import type { User } from "../models/user";
+import type { LoginResponse, User } from "../models/user";
 import { ApiService } from "./apiService";
 
 export class AuthService extends ApiService {
@@ -8,9 +8,8 @@ export class AuthService extends ApiService {
         return response;
       }
     
-      async login(userData: { email: string; password: string }){
-        const response = await this.post("/login", userData);
-        return response;
+      async login(userData: { email: string; password: string }): Promise<LoginResponse>{
+        return await this.post("/login", userData);
       }
     
       async logout() {

@@ -4,9 +4,11 @@ import (
 	"casino-hub/backend/database"
 	"casino-hub/backend/models"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -142,21 +144,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
-
-
-
 type contextKey string
 
 const userIDKey contextKey = "userID"
 
 func AuthMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenStr := r.Header.Get("Authorization")
-		if tokenStr == "" {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
 			http.Error(w, "Missing token", http.StatusUnauthorized)
 			return
 		}
+		parts := strings.SplitN(authHeader, " ", 2)
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			http.Error(w, "Invalid token format", http.StatusUnauthorized)
+			return
+		}
+		tokenStr := parts[1]
 
 		claims := &Claims{}
 		token, err := jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
@@ -167,6 +171,7 @@ func AuthMiddleWare(next http.Handler) http.Handler {
 			return
 		}
 
+		// Save userID in request context
 		ctx := context.WithValue(r.Context(), userIDKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -177,7 +182,84 @@ func GetUserID(ctx context.Context) (int, bool) {
 	return id, ok
 }
 
+// GetProfile godoc
+// @Summary Get current user profile
+// @Description Returns the logged-in user's profile info
+// @Tags users
+// @Produce json
+// @Success 200 {object} models.User
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Database error"
+// @Router /api/users/profile [get]
+func GetProfile(w http.ResponseWriter, r *http.Request) {
+	// Extract the UserID from the request context provided by AuthMiddleWare
+	userID, ok := GetUserID(r.Context())
+	if !ok {
+		// This should not happen if AuthMiddleWare is used, but it's a good practice to handle it.
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
+	var user models.User
+	// Use nullable types for database fields that can be NULL
+	var name sql.NullString
+	var lastActive, createdAt, lastFreeCoins sql.NullTime
+
+	// Query all the necessary fields from the database
+	err := database.DB.QueryRow(`
+		SELECT id, username, email, name, balance, score, level, experience, freeSpins, lastActive, created_at, last_free_coins
+		FROM users WHERE id = ?`, userID).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Email,
+		&user.Name,
+		&user.Balance,
+		&user.Score,
+		&user.Level,
+		&user.Experience,
+		&user.FreeSpins,
+		&lastActive,
+		&createdAt,
+		&lastFreeCoins,
+	)
+
+	if lastActive.Valid {
+		user.LastActive = lastActive.Time
+	}
+	if createdAt.Valid {
+		user.CreatedAt = createdAt.Time
+	}
+	if lastFreeCoins.Valid {
+		user.LastFreeCoins = lastFreeCoins.Time
+	}
+	
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "User not found", http.StatusNotFound)
+		} else {
+			log.Println("Database error:", err)
+			http.Error(w, "Database error", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Check if the nullable fields are valid and set them
+	if name.Valid {
+		user.Name = name.String
+	}
+	if lastActive.Valid {
+		user.LastActive = lastActive.Time
+	}
+	if lastFreeCoins.Valid {
+		user.LastFreeCoins = lastFreeCoins.Time
+	}
+
+	// Do not return the password, even if the model has the field
+	user.Password = ""
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
 
 // Logout godoc
 // @Summary Logout user

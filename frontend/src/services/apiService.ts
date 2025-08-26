@@ -13,11 +13,16 @@ export interface ApiServiceOptions {
         "Content-Type": "application/json",
       };
     }
+
+    private getAuthHeaders(): Record<string, string> {
+      const token = localStorage.getItem("token");
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }    
   
     protected async get<T>(endpoint: string): Promise<T> {
       const res = await fetch(`${this.baseURL}${endpoint}`, {
         method: "GET",
-        headers: this.defaultHeaders,
+        headers: { ...this.defaultHeaders, ...this.getAuthHeaders() },
       });
       return this.handleResponse<T>(res);
     }
@@ -25,7 +30,7 @@ export interface ApiServiceOptions {
     protected async post<T, B>(endpoint: string, body: B): Promise<T> {
       const res = await fetch(`${this.baseURL}${endpoint}`, {
         method: "POST",
-        headers: this.defaultHeaders,
+        headers: { ...this.defaultHeaders, ...this.getAuthHeaders() },
         body: JSON.stringify(body),
       });
       return this.handleResponse<T>(res);
@@ -34,7 +39,7 @@ export interface ApiServiceOptions {
     protected async put<T, B>(endpoint: string, body: B): Promise<T> {
       const res = await fetch(`${this.baseURL}${endpoint}`, {
         method: "PUT",
-        headers: this.defaultHeaders,
+        headers: { ...this.defaultHeaders, ...this.getAuthHeaders() },
         body: JSON.stringify(body),
       });
       return this.handleResponse<T>(res);
@@ -43,7 +48,7 @@ export interface ApiServiceOptions {
     protected async delete<T>(endpoint: string): Promise<T> {
       const res = await fetch(`${this.baseURL}${endpoint}`, {
         method: "DELETE",
-        headers: this.defaultHeaders,
+        headers: { ...this.defaultHeaders, ...this.getAuthHeaders() },
       });
       return this.handleResponse<T>(res);
     }

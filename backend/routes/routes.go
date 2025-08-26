@@ -14,25 +14,21 @@ func RegisterRoutes(r *mux.Router) {
 	api.HandleFunc("/login", handlers.Login).Methods("POST")
 	api.HandleFunc("/logout", handlers.Logout).Methods("POST")
 
-	// Player
-	api.HandleFunc("/user", handlers.RegisterUser).Methods("POST")
-	// api.HandleFunc("/player/{id}", handlers.GetPlayer).Methods("GET")
-	// api.HandleFunc("/player/{id}/funds/{amount}", handlers.AddFunds).Methods("POST")
-	// api.HandleFunc("/player/{id}/daily-bonus", handlers.GetDailyBonus).Methods("POST")
+	//Balance
+	balance := r.PathPrefix("/api/v1").Subrouter()
+	balance.Use(handlers.AuthMiddleWare)
+	balance.HandleFunc("/balance", handlers.GetBalance).Methods("GET")
+	balance.HandleFunc("/balance", handlers.UpdateBalance).Methods("PUT")
+
+
+    // protected user routes
+    userRoutes := r.PathPrefix("/api/v1/users").Subrouter()
+    userRoutes.Use(handlers.AuthMiddleWare)
+    userRoutes.HandleFunc("/profile", handlers.GetProfile).Methods("GET")
 
 	// Game
 	api.HandleFunc("/spin", handlers.SpinSlot).Methods("POST")
-	// api.HandleFunc("/bonus-game", handlers.PlayBonusGame).Methods("POST")
-	// api.HandleFunc("/symbols", handlers.GetSymbols).Methods("GET")
-
-	// Stats
-	// api.HandleFunc("/jackpot", handlers.GetJackpot).Methods("GET")
-	// api.HandleFunc("/stats", handlers.GetGameStats).Methods("GET")
-	// api.HandleFunc("/leaderboard", handlers.GetLeaderboard).Methods("GET")
-	// api.HandleFunc("/tournament", handlers.GetTournament).Methods("GET")
 
 	// Legacy
 	api.HandleFunc("/balance", handlers.GetBalance).Methods("GET")
-	// api.HandleFunc("/reset", handlers.ResetBalance).Methods("POST")
-	// api.HandleFunc("/slot", handlers.PlaySlot).Methods("POST")
 }

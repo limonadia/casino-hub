@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID         int       `json:"id"`
@@ -13,5 +15,7 @@ type User struct {
 	Level      int       `json:"level"`
 	Experience int       `json:"experience"`
 	FreeSpins  int       `json:"freeSpins"`
-	LastActive time.Time `json:"lastActive"`
+	LastActive  time.Time `json:"lastActive"`
+    LastFreeCoins time.Time `json:"lastFreeCoins"`  
+	CreatedAt time.Time `json:"createdAt"`
 }

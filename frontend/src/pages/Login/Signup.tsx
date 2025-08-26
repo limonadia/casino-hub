@@ -98,7 +98,7 @@ function Signup() {
                 setErrors({});
             
                 try {
-                    await authService.signup({ username, email, password });
+                    await authService.signup({ username, email, password, balance: 5000 });
                     success("User created successfully!")
                     navigate("/login");
                 } catch (err: any) {
