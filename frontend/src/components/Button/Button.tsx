@@ -19,17 +19,24 @@ const StyledButton = styled(Button)({
       border: 'none',
     },
 
-  });
+    "&.Mui-disabled": {
+    backgroundColor: "var(--color-disabled-casinoPink) !important", 
+    color: "#F0F0F0",
+    cursor: "not-allowed", 
+  },
+
+});
 
 interface ButtonProperties {
     buttonText: string;
     onClick?: () => void;
+    disabled?: boolean; 
 }
 
-function ButtonComponent({buttonText, onClick}: ButtonProperties){
+function ButtonComponent({buttonText, onClick, disabled = false}: ButtonProperties){
     return(
         <>
-            <StyledButton variant="contained" onClick={onClick}>
+            <StyledButton variant="contained" onClick={onClick} disabled={disabled}>
                 {buttonText}
             </StyledButton>
         </>

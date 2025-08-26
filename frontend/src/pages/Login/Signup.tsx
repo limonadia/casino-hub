@@ -1,25 +1,80 @@
-import { TextField } from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import ButtonComponent from "../../components/Button/Button";
 import { useState } from "react";
 import { authService } from "../../services/authService";
+import { validationService } from "../../validation/validationService";
+import { validationErrorService } from "../../validation/validationErrorService";
 
 function Signup() {
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => {setShowPassword(!showPassword)};
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault(); 
+    };
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setName] = useState("");
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const navigate = useNavigate();
 
+    const formIsValid = username && email && password && !errors.username && !errors.email && !errors.password;
+
+    const handleUsernameChange = (value: string) => {
+        setName(value);
+        const errorObj = validationService.requiredValidator(value, "Username");
+        setErrors((prev) => ({
+          ...prev,
+          username: validationErrorService.getErrorMessage(errorObj),
+        }));
+      };
+      
+    const handleEmailChange = (value: string) => {
+        setEmail(value);
+        const errorObj = validationService.emailValidator(value);
+        setErrors((prev) => ({
+          ...prev,
+          email: validationErrorService.getErrorMessage(errorObj),
+        }));
+      };
+      
+    const handlePasswordChange = (value: string) => {
+        setPassword(value);
+        const errorObj = validationService.minLengthValidator(value, 8);
+        setErrors((prev) => ({
+          ...prev,
+          password: validationErrorService.getErrorMessage(errorObj),
+        }));
+      };
+      
+
     const signup = async () => {
-        try{
-            const response = await authService.signup({ username, email, password});
-            console.log("Signup response:", response);
+    
+        const newErrors: { [key: string]: string } = {};
+
+        const usernameError = validationService.requiredValidator(username, "Username");
+        const emailError = validationService.emailValidator(email);
+        const passwordError = validationService.minLengthValidator(password, 8);
+
+        if (usernameError) newErrors.username = validationErrorService.getErrorMessage(usernameError);
+        if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
+        if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
+
+        setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+        setErrors({});
+    
+        try {
+            await authService.signup({ username, email, password });
             navigate("/login");
-        } catch (err: any){
-            setError(err.message || "Signup failed");
+        } catch (err: any) {
+            setErrors({ general: err.message || "Signup failed" });
         }
     };
+    
 
     return (
     <div className="text-center page lg:mx-10 h-full">
@@ -27,15 +82,34 @@ function Signup() {
             <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold mb-4 text-center text-black">Signup Form</h2>
                     
-                <div className="py-5 h-60 flex items-center flex-col justify-between w-80">
-                    <TextField label="Username" type="text" value={username} onChange={(e) => setName(e.target.value)} fullWidth variant="outlined"/>
-                    <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth variant="outlined"/>
-                    <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth variant="outlined"/>
+                <div className="py-5 h-68 flex items-center flex-col justify-between w-80">
+                    <TextField label="Username" type="text" value={username} onChange={(e) => handleUsernameChange(e.target.value)} fullWidth
+                        variant="outlined"  error={!!errors.username} helperText={errors.username}/>
+
+                    <TextField label="Email" type="email" value={email} onChange={(e) => handleEmailChange(e.target.value)} fullWidth
+                        variant="outlined" error={!!errors.email} helperText={errors.email}/>
+
+                    <TextField label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => handlePasswordChange(e.target.value)} fullWidth variant="outlined"
+                            error={!!errors.password} helperText={errors.password} 
+                            InputProps={{
+                                endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton sx={{ padding: 0, margin: 0, background: 'white'}}
+                                      aria-label={showPassword ? 'hide the password' : 'display the password'}
+                                      onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}
+                                      onMouseUp={handleMouseDownPassword} edge="end">
+                                        <span className="material-icons bg-white"> 
+                                            {showPassword ? "visibility_off" : "visibility"}
+                                        </span>
+                                    </IconButton>
+                                </InputAdornment>
+                                ),
+                            }}/>
                 </div>
 
-                <ButtonComponent buttonText="Signup" onClick={signup} />
+                <ButtonComponent buttonText="Signup" onClick={signup} disabled={!formIsValid} />
                 
-                <p className="text-black pt-3">Already have an account?<Link to="/login" className="text-casinoPink !text-casinoPink">Login</Link></p> 
+                <p className="text-black pt-3">Already have an account? <Link to="/login" className="text-casinoPink !text-casinoPink"> Login</Link></p> 
             </div>
         </div>
     </div>
