@@ -5,8 +5,11 @@ import { useState } from "react";
 import { authService } from "../../services/authService";
 import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
+import { useNotifications } from "../../services/notificationContext";
 
 function Signup() {
+    const { success, error } = useNotifications();
+
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => {setShowPassword(!showPassword)};
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -14,11 +17,12 @@ function Signup() {
     };
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [username, setName] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const navigate = useNavigate();
 
-    const formIsValid = username && email && password && !errors.username && !errors.email && !errors.password;
+    const formIsValid = username && email && password && !errors.username && !errors.email && !errors.password && !errors.confirmPassword;
 
     const handleUsernameChange = (value: string) => {
         setName(value);
@@ -47,6 +51,20 @@ function Signup() {
         }));
       };
       
+      const handleConfirmPasswordChange = (value: string) => {
+        setConfirmPassword(value);
+      
+        const errorMsg =
+          value !== password
+            ? "Passwords do not match"
+            : "";
+      
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: errorMsg,
+        }));
+      };
+      
 
     const signup = async () => {
     
@@ -55,6 +73,11 @@ function Signup() {
         const usernameError = validationService.requiredValidator(username, "Username");
         const emailError = validationService.emailValidator(email);
         const passwordError = validationService.minLengthValidator(password, 8);
+        const confirmPasswordError = confirmPassword !== password ? { key: "passwordMismatch", params: {} }: null;
+
+if (confirmPasswordError)
+  newErrors.confirmPassword = "Passwords do not match";
+
 
         if (usernameError) newErrors.username = validationErrorService.getErrorMessage(usernameError);
         if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
@@ -69,8 +92,10 @@ function Signup() {
     
         try {
             await authService.signup({ username, email, password });
+            success("User created successfully!")
             navigate("/login");
         } catch (err: any) {
+            error("Signup failed. Please try again.")
             setErrors({ general: err.message || "Signup failed" });
         }
     };
@@ -82,7 +107,7 @@ function Signup() {
             <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold mb-4 text-center text-black">Signup Form</h2>
                     
-                <div className="py-5 h-68 flex items-center flex-col justify-between w-80">
+                <div className="py-5 h-96 flex items-center flex-col justify-between w-80">
                     <TextField label="Username" type="text" value={username} onChange={(e) => handleUsernameChange(e.target.value)} fullWidth
                         variant="outlined"  error={!!errors.username} helperText={errors.username}/>
 
@@ -105,7 +130,27 @@ function Signup() {
                                 </InputAdornment>
                                 ),
                             }}/>
-                </div>
+                    <TextField label="Confirm Password" type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => handleConfirmPasswordChange(e.target.value)} fullWidth
+                        variant="outlined"  error={!!errors.confirmPassword} helperText={errors.confirmPassword}    
+                        InputProps={{
+                            endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                sx={{ padding: 0, margin: 0, background: 'white'}}
+                                aria-label={showPassword ? 'hide password' : 'show password'}
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                onMouseUp={handleMouseDownPassword}
+                                edge="end"
+                                >
+                                <span className="material-icons bg-white">
+                                    {showPassword ? "visibility_off" : "visibility"}
+                                </span>
+                                </IconButton>
+                            </InputAdornment>
+                            ),
+                        }}/>
+                    </div>
 
                 <ButtonComponent buttonText="Signup" onClick={signup} disabled={!formIsValid} />
                 

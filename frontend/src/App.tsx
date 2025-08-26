@@ -17,7 +17,6 @@ import CasinoRoulette from './pages/Games/Roulette/Roulette';
 import Login from './pages/Login/Login';
 import Signup from './pages/Login/Signup';
 
-
 function App() {
   const [balance, setBalance] = useState(1000);
 
@@ -47,6 +46,7 @@ return (
           </main>
         </div>
       </div>
+
 );
 }
 

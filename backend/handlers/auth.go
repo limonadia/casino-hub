@@ -111,14 +111,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	row := database.DB.QueryRow("SELECT id, password FROM users WHERE email = ?", creds.Email)
 	if err := row.Scan(&user.ID, &user.Password); err != nil {
 		log.Println("Login failed: user not found for email:", creds.Email)
-		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		http.Error(w, "Email does not exist", http.StatusNotFound)
 		return
 	}
-
-	// Debug logs for password
-	log.Println("Login attempt for:", creds.Email)
-	log.Println("Password from frontend:", creds.Password)
-	log.Println("Hashed password from DB:", user.Password)
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
 		log.Println("Password comparison failed:", err)

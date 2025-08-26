@@ -6,8 +6,11 @@ import { authService } from "../../services/authService";
 import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { IconButton, InputAdornment } from "@mui/material";
+import { useNotifications } from "../../services/notificationContext";
 
  function Login() {
+    const { error } = useNotifications();
+
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => {setShowPassword(!showPassword)};
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,7 +41,15 @@ import { IconButton, InputAdornment } from "@mui/material";
             await authService.login({ email, password });
             navigate("/");
         } catch (err: any) {
-          console.error(err.message || "Login failed");
+            const message = err.message || "Login failed";
+
+            if (message.includes("401") || message.includes("Invalid credentials")) {
+                error("Incorrect password." );
+            } else if (message.includes("404") || message.includes("not found")) {
+                error("Email does not exist");
+            } else {
+                error("Something went wrong. Please try again later.")
+            }
         }
       };
 
