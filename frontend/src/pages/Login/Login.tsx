@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ButtonComponent from "../../components/Button/Button";
 import TextField from "@mui/material/TextField";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,6 +24,31 @@ import { useAuth } from "../../services/authContext";
     const formIsValid = email && password && !errors.email && !errors.password && password.length >=8;
     
     const navigate = useNavigate();
+
+    const passwordRef = useRef<HTMLInputElement>(null);
+
+    const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          if (!email) return; 
+          if (!password && passwordRef.current) {
+            passwordRef.current.focus();
+            e.preventDefault();
+          } else {
+            login();
+          }
+        }
+      };
+      
+      const handlePasswordKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+          if (!password && passwordRef.current) {
+            passwordRef.current.focus();
+            e.preventDefault();
+          } else {
+            login();
+          }
+        }
+      };
 
     const login = async () => {
         const newErrors: { [key: string]: string } = {};
@@ -64,9 +89,9 @@ import { useAuth } from "../../services/authContext";
                     
                     <div className="py-5 h-44 flex items-center flex-col justify-between w-80">
                         <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth variant="outlined"
-                            error={!!errors.email} helperText={errors.email}/>
+                            error={!!errors.email} helperText={errors.email} onKeyDown={handleEmailKeyDown}/>
                         <TextField label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} fullWidth variant="outlined"
-                            error={!!errors.password} helperText={errors.password} 
+                            error={!!errors.password} helperText={errors.password} onKeyDown={handlePasswordKeyDown} inputRef={passwordRef}
                             InputProps={{
                                 endAdornment: (
                                 <InputAdornment position="end">

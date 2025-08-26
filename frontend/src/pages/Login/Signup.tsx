@@ -1,13 +1,19 @@
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import ButtonComponent from "../../components/Button/Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { authService } from "../../services/authService";
 import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { useNotifications } from "../../services/notificationContext";
 
 function Signup() {
+
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+
     const { success, error } = useNotifications();
 
     const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +70,7 @@ function Signup() {
           confirmPassword: errorMsg,
         }));
       };
+
       
 
     const signup = async () => {
@@ -75,29 +82,48 @@ function Signup() {
         const passwordError = validationService.minLengthValidator(password, 8);
         const confirmPasswordError = confirmPassword !== password ? { key: "passwordMismatch", params: {} }: null;
 
-if (confirmPasswordError)
-  newErrors.confirmPassword = "Passwords do not match";
+        if (confirmPasswordError)
+          newErrors.confirmPassword = "Passwords do not match";
 
 
-        if (usernameError) newErrors.username = validationErrorService.getErrorMessage(usernameError);
-        if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
-        if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
+                if (usernameError) newErrors.username = validationErrorService.getErrorMessage(usernameError);
+                if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
+                if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
 
-        setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
+                setErrors(newErrors);
+                if (Object.keys(newErrors).length > 0) {
+                    setErrors(newErrors);
+                    return;
+                }
+                setErrors({});
+            
+                try {
+                    await authService.signup({ username, email, password });
+                    success("User created successfully!")
+                    navigate("/login");
+                } catch (err: any) {
+                    error("Signup failed. Please try again.")
+                    setErrors({ general: err.message || "Signup failed" });
+                }
+    };
+
+    const handleKeyDown = (field: string) => (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        switch (field) {
+          case "username":
+            emailRef.current?.focus();
+            break;
+          case "email":
+            passwordRef.current?.focus();
+            break;
+          case "password":
+            confirmPasswordRef.current?.focus();
+            break;
+          case "confirmPassword":
+            signup(); // trigger signup on last field
+            break;
         }
-        setErrors({});
-    
-        try {
-            await authService.signup({ username, email, password });
-            success("User created successfully!")
-            navigate("/login");
-        } catch (err: any) {
-            error("Signup failed. Please try again.")
-            setErrors({ general: err.message || "Signup failed" });
-        }
+      }
     };
     
 
@@ -109,13 +135,13 @@ if (confirmPasswordError)
                     
                 <div className="py-5 h-96 flex items-center flex-col justify-between w-80">
                     <TextField label="Username" type="text" value={username} onChange={(e) => handleUsernameChange(e.target.value)} fullWidth
-                        variant="outlined"  error={!!errors.username} helperText={errors.username}/>
+                        variant="outlined"  error={!!errors.username} helperText={errors.username} onKeyDown={handleKeyDown("username")} inputRef={usernameRef}/>
 
                     <TextField label="Email" type="email" value={email} onChange={(e) => handleEmailChange(e.target.value)} fullWidth
-                        variant="outlined" error={!!errors.email} helperText={errors.email}/>
+                        variant="outlined" error={!!errors.email} helperText={errors.email} inputRef={emailRef}  onKeyDown={handleKeyDown("email")}/>
 
                     <TextField label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => handlePasswordChange(e.target.value)} fullWidth variant="outlined"
-                            error={!!errors.password} helperText={errors.password} 
+                            error={!!errors.password} helperText={errors.password} inputRef={passwordRef} onKeyDown={handleKeyDown("password")}
                             InputProps={{
                                 endAdornment: (
                                 <InputAdornment position="end">
@@ -131,7 +157,7 @@ if (confirmPasswordError)
                                 ),
                             }}/>
                     <TextField label="Confirm Password" type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => handleConfirmPasswordChange(e.target.value)} fullWidth
-                        variant="outlined"  error={!!errors.confirmPassword} helperText={errors.confirmPassword}    
+                        variant="outlined"  error={!!errors.confirmPassword} helperText={errors.confirmPassword} inputRef={confirmPasswordRef} onKeyDown={handleKeyDown("confirmPassword")} 
                         InputProps={{
                             endAdornment: (
                             <InputAdornment position="end">
@@ -161,4 +187,4 @@ if (confirmPasswordError)
     );
 }
 
-    export default Signup;
+export default Signup;

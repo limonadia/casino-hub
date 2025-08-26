@@ -54,7 +54,6 @@ export interface ApiServiceOptions {
     
         if (res.status === 401) {
           localStorage.removeItem("token");     
-          window.location.href = "/";     
         }
     
         throw new Error(`API error ${res.status}: ${text}`);
