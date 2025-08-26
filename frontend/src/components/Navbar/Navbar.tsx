@@ -1,12 +1,14 @@
 import { NavLink } from "react-router-dom";
 import Balance from "../Balance/Balance";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './Navbar.css';
 import LanguageSelect from "../LanguageSelect/LanguageSelect";
 import ButtonComponent from "../Button/Button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../services/authContext";
 
 function Navbar({ balance }: { balance: number }) {
+    const { token } = useAuth();
     const [open, setOpen] = useState(false);
     const linkClasses = ({ isActive }: {isActive: boolean}) => isActive ? "active-link" : "";
     const navigate = useNavigate();
@@ -14,7 +16,7 @@ function Navbar({ balance }: { balance: number }) {
     const toLogin = () => {
         navigate("/login"); 
       };
-    
+
 return (
     <div className="p-4 bg-background-darker">
 
@@ -25,8 +27,9 @@ return (
             </div>
             <div className="flex gap-6 items-center">
                 <LanguageSelect/>
-                <Balance balance={balance}/>
-                <ButtonComponent buttonText={"Login"} onClick={toLogin}/>
+                <div>
+                    {token ? ( <Balance balance={balance} /> ) : (<ButtonComponent buttonText="Login" onClick={toLogin} />)}
+                </div>
             </div>
         </div>
 

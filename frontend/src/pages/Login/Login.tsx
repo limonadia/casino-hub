@@ -7,10 +7,11 @@ import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { IconButton, InputAdornment } from "@mui/material";
 import { useNotifications } from "../../services/notificationContext";
+import { useAuth } from "../../services/authContext";
 
  function Login() {
     const { error } = useNotifications();
-
+    const { setToken } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => {setShowPassword(!showPassword)};
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,7 +39,9 @@ import { useNotifications } from "../../services/notificationContext";
         }
         setErrors({});
         try {
-            await authService.login({ email, password });
+            const response = await authService.login({ email, password });
+            localStorage.setItem("token", String(response));
+            setToken(String(response));
             navigate("/");
         } catch (err: any) {
             const message = err.message || "Login failed";

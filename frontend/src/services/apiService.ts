@@ -51,9 +51,17 @@ export interface ApiServiceOptions {
     private async handleResponse<T>(res: Response): Promise<T> {
       if (!res.ok) {
         const text = await res.text();
+    
+        if (res.status === 401) {
+          localStorage.removeItem("token");     
+          window.location.href = "/";     
+        }
+    
         throw new Error(`API error ${res.status}: ${text}`);
       }
+    
       return res.json();
     }
+    
   }
   
