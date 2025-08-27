@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"casino-hub/backend/database"
 	"casino-hub/backend/models"
 	"encoding/json"
 	"math/rand"
@@ -18,56 +19,103 @@ import (
 // @Success 200 {object} models.SpinResult
 // @Router /api/slot/spin [post]
 func SpinSlot(w http.ResponseWriter, r *http.Request) {
-	var req models.SpinRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+    var req models.SpinRequest
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "Invalid JSON", http.StatusBadRequest)
+        return
+    }
+
+	userID, ok := GetUserID(r.Context())
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-
+	
+	var balance int64
+	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&balance)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	
+	if balance < req.BetAmount {
+		http.Error(w, "Insufficient balance", http.StatusBadRequest)
+		return
+	}
+	
 	results := GenerateSymbols()
 	winAmount, winType, multiplier := CalculateWin(results, req.BetAmount)
-
+	
+	newBalance := balance - req.BetAmount + winAmount
+	_, err = database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", newBalance, userID)
+	if err != nil {
+		http.Error(w, "Could not update balance", http.StatusInternalServerError)
+		return
+	}
+	
 	res := models.SpinResult{
 		Success:    true,
 		Symbols:    results,
 		WinAmount:  winAmount,
-		NewBalance: 10000 - req.BetAmount + winAmount, // TODO: fetch/update DB
+		NewBalance: newBalance,
 		WinType:    winType,
+		JackpotWin: false,
 		Multiplier: multiplier,
+		Message:    "Spin completed",
 	}
-
+	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
+	
 }
 
+
 var symbols = []models.Symbol{
-	{ID: 1, Name: "Cherry", Emoji: "🍒", Multiplier: 2, Rarity: 0.30},
-	{ID: 2, Name: "Lemon", Emoji: "🍋", Multiplier: 3, Rarity: 0.25},
-	{ID: 3, Name: "Bell", Emoji: "🔔", Multiplier: 5, Rarity: 0.20},
-	{ID: 4, Name: "Diamond", Emoji: "💎", Multiplier: 10, Rarity: 0.15},
-	{ID: 5, Name: "Star", Emoji: "⭐", Multiplier: 15, Rarity: 0.08},
-	{ID: 6, Name: "Crown", Emoji: "👑", Multiplier: 25, Rarity: 0.02},
+    {ID: 1, Name: "Cherry", Emoji: "🍒", Multiplier: 2, Rarity: 0.25},
+    {ID: 2, Name: "Lemon", Emoji: "🍋", Multiplier: 3, Rarity: 0.20},
+    {ID: 3, Name: "Orange", Emoji: "🍊", Multiplier: 4, Rarity: 0.15},
+    {ID: 4, Name: "Grapes", Emoji: "🍇", Multiplier: 6, Rarity: 0.12},
+    {ID: 5, Name: "Bell", Emoji: "🔔", Multiplier: 8, Rarity: 0.10},
+    {ID: 6, Name: "Star", Emoji: "⭐", Multiplier: 12, Rarity: 0.08},
+    {ID: 7, Name: "Diamond", Emoji: "💎", Multiplier: 20, Rarity: 0.05},
+    {ID: 8, Name: "Lucky 7", Emoji: "7️⃣", Multiplier: 50, Rarity: 0.03},
+    {ID: 9, Name: "Crown", Emoji: "👑", Multiplier: 100, Rarity: 0.02},
 }
 
 func Init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// func getRandomSymbol() int {
+//     r := rand.Float64()
+//     cumulative := 0.0
+//     for i, s := range symbols {
+//         cumulative += s.Rarity
+//         if r < cumulative {
+//             return i
+//         }
+//     }
+//     return len(symbols) - 1
+// }
+
+
 func GenerateSymbols() []int {
-	result := make([]int, 3)
-	for i := 0; i < 3; i++ {
-		random := rand.Float64()
-		cumulative := 0.0
-		for j, s := range symbols {
-			cumulative += s.Rarity
-			if random <= cumulative {
-				result[i] = j
-				break
-			}
-		}
-	}
-	return result
+    result := make([]int, 3)
+
+    if rand.Float64() < 0.08 {
+        idx := rand.Intn(len(symbols))
+        for i := range result {
+            result[i] = idx
+        }
+        return result
+    }
+
+    for i := range result {
+        result[i] = rand.Intn(len(symbols))
+    }
+    return result
 }
+
 
 func CalculateWin(results []int, bet int64) (int64, string, float64) {
 	symbolCounts := make(map[int]int)

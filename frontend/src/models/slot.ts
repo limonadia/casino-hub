@@ -1,5 +1,4 @@
 export interface SpinRequest {
-    playerId: string;
     betAmount: number;
   }
   

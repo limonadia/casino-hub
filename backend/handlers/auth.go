@@ -192,10 +192,8 @@ func GetUserID(ctx context.Context) (int, bool) {
 // @Failure 500 {string} string "Database error"
 // @Router /api/users/profile [get]
 func GetProfile(w http.ResponseWriter, r *http.Request) {
-	// Extract the UserID from the request context provided by AuthMiddleWare
 	userID, ok := GetUserID(r.Context())
 	if !ok {
-		// This should not happen if AuthMiddleWare is used, but it's a good practice to handle it.
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}

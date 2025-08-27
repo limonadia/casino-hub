@@ -11,7 +11,7 @@ import hi_lo from "../../assets/hi-lo.webp"
 function Games() {
     return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-    <GameCard title="Slot Machine" path="/games/slot" imgSrc={slot2}/>
+    <GameCard title="Royal Slots" path="/games/slot" imgSrc={slot2}/>
     <GameCard title="Blackjack" path="/games/blackjack" imgSrc={blackjack}/>
     <GameCard title="Roulette" path="/games/roulette" imgSrc={roulette}/>
     <GameCard title="Baccarat" path="/games/baccarat" imgSrc={baccarat}/>

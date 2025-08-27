@@ -116,7 +116,6 @@ button:hover {
   outline: none !important;
   box-shadow: none !important;
   background-color: var(--color-background-darker) !important;
-  width: 100%;
 }
 
 

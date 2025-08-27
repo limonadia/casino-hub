@@ -22,13 +22,12 @@ func RegisterRoutes(r *mux.Router) {
 
 
     // protected user routes
-    userRoutes := r.PathPrefix("/api/v1/users").Subrouter()
-    userRoutes.Use(handlers.AuthMiddleWare)
-    userRoutes.HandleFunc("/profile", handlers.GetProfile).Methods("GET")
+    user := api.PathPrefix("/users").Subrouter()
+    user.Use(handlers.AuthMiddleWare)
+    user.HandleFunc("/profile", handlers.GetProfile).Methods("GET")
 
-	// Game
-	api.HandleFunc("/spin", handlers.SpinSlot).Methods("POST")
-
-	// Legacy
-	api.HandleFunc("/balance", handlers.GetBalance).Methods("GET")
+	// slot
+	slot := api.PathPrefix("/slot").Subrouter()
+	slot.Use(handlers.AuthMiddleWare)
+	slot.HandleFunc("/spin", handlers.SpinSlot).Methods("POST")
 }
