@@ -41,25 +41,45 @@ func GetBalance (w http.ResponseWriter, r *http.Request){
 // @Failure 400 {string} string "Invalid request"
 // @Failure 401 {string} string "Unauthorized"
 // @Router /api/balance [put]
-func UpdateBalance (w http.ResponseWriter, r *http.Request){
-    userIDStr := r.Header.Get("userID")
-    userID, _ := strconv.Atoi(userIDStr)
+func UpdateBalance(w http.ResponseWriter, r *http.Request) {
+    // Get the logged-in user ID from context
+    userID, ok := GetUserID(r.Context())
+    if !ok || userID <= 0 {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
 
+    // Parse request body
     var req struct {
         Amount int `json:"amount"`
     }
-
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
         http.Error(w, "Invalid request", http.StatusBadRequest)
         return
     }
 
-    _, err := database.DB.Exec("UPDATE users SET balance = balance + ? WHERE id = ?", req.Amount, userID)
+    // Safely update balance in DB (no negative balances)
+    _, err := database.DB.Exec(
+        "UPDATE users SET balance = GREATEST(balance + ?, 0) WHERE id = ?",
+        req.Amount, userID,
+    )
     if err != nil {
         http.Error(w, "Could not update balance", http.StatusInternalServerError)
         return
     }
 
-    json.NewEncoder(w).Encode(map[string]string{"message": "Balance updated"})
+    // Fetch the updated balance
+    var newBalance int
+    err = database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&newBalance)
+    if err != nil {
+        http.Error(w, "Could not fetch updated balance", http.StatusInternalServerError)
+        return
+    }
+
+    // Return the updated balance
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]int{"balance": newBalance})
 }
+
+
 

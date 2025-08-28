@@ -30,4 +30,11 @@ func RegisterRoutes(r *mux.Router) {
 	slot := api.PathPrefix("/slot").Subrouter()
 	slot.Use(handlers.AuthMiddleWare)
 	slot.HandleFunc("/spin", handlers.SpinSlot).Methods("POST")
+
+	//blackJack
+	blackjack := api.PathPrefix("/blackjack").Subrouter()
+	blackjack.Use(handlers.AuthMiddleWare)
+	blackjack.HandleFunc("/start", handlers.StartGameHandler).Methods("POST")
+	blackjack.HandleFunc("/hit", handlers.HitHandler).Methods("POST")
+	blackjack.HandleFunc("/stand", handlers.StandHandler).Methods("POST")
 }

@@ -7,11 +7,11 @@ export class UserService extends ApiService {
         return await this.get("/users/profile");
       }
     
-      async updateBalance(amount: number) {
-        const response = await this.put("/balance", amount);
-        return response;
+      async updateBalance(amount: number): Promise<number> {
+        const response = await this.put<{ balance: number }, { amount: number }>("/balance", { amount });
+        return response.balance;
       }
-
+      
 }
 
 export const userService = new UserService();
