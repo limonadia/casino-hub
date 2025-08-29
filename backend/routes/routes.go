@@ -20,7 +20,6 @@ func RegisterRoutes(r *mux.Router) {
 	balance.HandleFunc("/balance", handlers.GetBalance).Methods("GET")
 	balance.HandleFunc("/balance", handlers.UpdateBalance).Methods("PUT")
 
-
     // protected user routes
     user := api.PathPrefix("/users").Subrouter()
     user.Use(handlers.AuthMiddleWare)
@@ -37,4 +36,9 @@ func RegisterRoutes(r *mux.Router) {
 	blackjack.HandleFunc("/start", handlers.StartGameHandler).Methods("POST")
 	blackjack.HandleFunc("/hit", handlers.HitHandler).Methods("POST")
 	blackjack.HandleFunc("/stand", handlers.StandHandler).Methods("POST")
+
+	//baccarat
+	baccarat := api.PathPrefix("/baccarat").Subrouter()
+	baccarat.Use(handlers.AuthMiddleWare)
+	baccarat.HandleFunc("/play", handlers.PlayBaccarat).Methods("POST")
 }

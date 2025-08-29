@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './Baccarat.css'
-
-type BetType = 'Player' | 'Banker' | 'Tie';
+import { useAuth } from '../../../services/authContext';
+import { baccaratService, BetType } from '../../../services/baccaratService';
+import { motion } from 'framer-motion';
 
 interface Card {
   suit: '♠' | '♥' | '♦' | '♣';
@@ -14,29 +15,6 @@ interface Bet {
   type: BetType;
   amount: number;
 }
-
-const suits: ('♠' | '♥' | '♦' | '♣')[] = ['♠', '♥', '♦', '♣'];
-
-const getCardValue = (val: number) => (val > 9 ? 0 : val);
-
-const getCardDisplay = (val: number, suit: string) => {
-  if (val === 1) return `A${suit}`;
-  if (val === 11) return `J${suit}`;
-  if (val === 12) return `Q${suit}`;
-  if (val === 13) return `K${suit}`;
-  return `${val}${suit}`;
-};
-
-const drawCard = (): Card => {
-  const faceValue = Math.floor(Math.random() * 13) + 1;
-  const suit = suits[Math.floor(Math.random() * 4)];
-  return { 
-    suit, 
-    value: getCardValue(faceValue), 
-    display: getCardDisplay(faceValue, suit),
-    faceValue 
-  };
-};
 
 const CardComponent = ({ card, isRevealed, delay = 0 }: { 
   card?: Card; 
@@ -58,26 +36,18 @@ const CardComponent = ({ card, isRevealed, delay = 0 }: {
 
   return (
     <div className={`relative w-20 h-28 transition-all duration-500 ${showCard ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
-      <div
-        className={`absolute inset-0 rounded-xl shadow-2xl transform transition-transform duration-700 ${
-          showCard ? 'rotateY-0' : 'rotateY-180'
-        }`}
-        style={{ transformStyle: 'preserve-3d' }}
-      >
+      <div className={`absolute inset-0 rounded-xl shadow-2xl transform transition-transform duration-700 ${showCard ? 'rotateY-0' : 'rotateY-180'}`}
+        style={{ transformStyle: 'preserve-3d' }}>
         {/* Card Back */}
-        <div
-          className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-900 via-purple-900 to-blue-900 border-2 border-gold-400 flex items-center justify-center backface-hidden"
-          style={{ transform: 'rotateY(180deg)' }}
-        >
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-900 via-purple-900 to-blue-900 border-2 border-gold-400 flex items-center justify-center backface-hidden"
+          style={{ transform: 'rotateY(180deg)' }}>
           <div className="w-12 h-16 bg-gradient-to-br from-gold-300 to-gold-600 rounded-lg flex items-center justify-center">
             <div className="text-blue-900 font-bold text-xs">🂠</div>
           </div>
         </div>
 
         {/* Card Front */}
-        <div
-          className="absolute inset-0 rounded-xl bg-white border-2 border-gray-300 shadow-inner backface-hidden"
-        >
+        <div className="absolute inset-0 rounded-xl bg-white border-2 border-gray-300 shadow-inner backface-hidden">
           {card && (
             <div className="p-2 h-full flex flex-col justify-between">
               <div className={`text-lg font-bold ${isRed ? 'text-red-600' : 'text-black'}`}>
@@ -86,9 +56,7 @@ const CardComponent = ({ card, isRevealed, delay = 0 }: {
               <div className={`text-4xl ${isRed ? 'text-red-600' : 'text-black'} text-center`}>
                 {card.suit}
               </div>
-              <div 
-                className={`text-lg font-bold ${isRed ? 'text-red-600' : 'text-black'} transform rotate-180 self-end`}
-              >
+              <div className={`text-lg font-bold ${isRed ? 'text-red-600' : 'text-black'} transform rotate-180 self-end`}>
                 {card.display}
               </div>
             </div>
@@ -104,8 +72,7 @@ const ChipComponent = ({ value, selected, onClick }: {
   selected: boolean;
   onClick: (value: number) => void;
 }) => (
-  <button
-    onClick={() => onClick(value)}
+  <button onClick={() => onClick(value)}
     className={`relative w-16 h-16 rounded-full border-4 font-bold text-sm shadow-2xl transform transition-all duration-300 hover:scale-110 active:scale-95 ${
       selected 
         ? 'border-yellow-300 bg-gradient-to-br from-yellow-200 to-yellow-400 text-black ring-4 ring-yellow-400/50' 
@@ -113,13 +80,10 @@ const ChipComponent = ({ value, selected, onClick }: {
         : value === 25 ? 'border-green-400 bg-gradient-to-br from-green-500 to-green-700 text-white'
         : value === 50 ? 'border-blue-400 bg-gradient-to-br from-blue-500 to-blue-700 text-white'
         : value === 100 ? 'border-black bg-gradient-to-br from-gray-800 to-black text-white'
+        : value === 250 ? 'border-black bg-gradient-to-br from-orange-600 to-orange-800 text-white'
         : 'border-purple-400 bg-gradient-to-br from-purple-500 to-purple-700 text-white'
-    }`}
-  >
+    }`}>
     {value}
-    {/* Chip details */}
-    <div className="absolute inset-2 rounded-full border border-white/30" />
-    <div className="absolute inset-3 rounded-full border border-white/20" />
   </button>
 );
 
@@ -132,16 +96,13 @@ const BettingArea = ({ type, bet, onBet, payout }: {
   const isActive = bet?.type === type;
   
   return (
-    <button
-      onClick={() => onBet(type)}
-      className={`relative p-6 rounded-2xl border-4 font-bold text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 ${
-        type === 'Player' 
+    <button onClick={() => onBet(type)} className={`relative p-6 rounded-2xl border-4 font-bold text-xl transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+        type === BetType.Player
           ? 'bg-gradient-to-br from-blue-600 to-blue-800 border-blue-400 text-white hover:from-blue-500 hover:to-blue-700'
-        : type === 'Banker'
-          ? 'bg-gradient-to-br from-red-600 to-red-800 border-red-400 text-white hover:from-red-500 hover:to-red-700'
+        : type === BetType.Banker
+          ? 'bg-gradient-to-br from-pink-600 to-pink-800 border-pink-400 text-white hover:from-pink-500 hover:to-pink-700'
           : 'bg-gradient-to-br from-green-600 to-green-800 border-green-400 text-white hover:from-green-500 hover:to-green-700'
-      } ${isActive ? 'ring-4 ring-yellow-400 shadow-2xl' : 'shadow-lg'}`}
-    >
+      } ${isActive ? 'ring-4 ring-yellow-400 shadow-2xl' : 'shadow-lg'}`}>
       <div className="text-center">
         <div className="text-2xl font-bold mb-1">{type.toUpperCase()}</div>
         <div className="text-sm opacity-90">{payout}</div>
@@ -178,7 +139,7 @@ const ScoreDisplay = ({ cards, title, color }: {
       </div>
       <div className={`text-4xl font-bold ${color} bg-black/20 rounded-xl px-4 py-2 border-2 ${
         color.includes('blue') ? 'border-blue-400' : 
-        color.includes('red') ? 'border-red-400' : 'border-green-400'
+        color.includes('red') ? 'border-red-400' : 'border-pink-400'
       }`}>
         {total}
       </div>
@@ -198,6 +159,7 @@ const PremiumBaccarat = () => {
   const [showWin, setShowWin] = useState(false);
   const [winAmount, setWinAmount] = useState(0);
   const [roundNumber, setRoundNumber] = useState(1);
+  const { token, balance, setBalance } = useAuth(); 
 
   const calculateTotal = (cards: Card[]) => cards.reduce((sum, c) => sum + c.value, 0) % 10;
 
@@ -210,94 +172,45 @@ const PremiumBaccarat = () => {
   };
 
   const deal = async () => {
-    if (!bet || isDealing) return;
-    
+    if (!bet || isDealing || !token) return;
+  
     setIsDealing(true);
-    setMessage('Dealing cards...');
+    setMessage("Dealing cards...");
     setPlayerCards([]);
     setBankerCards([]);
     setShowWin(false);
+  
+    try {
+      console.log("bet.type", bet.type);
+      console.log("bet.amount", bet.amount);
+      console.log("token", token);
 
-    // Simulate card dealing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+      const result: any = await baccaratService.playRound(bet.type , bet.amount, token);
+      console.log("result", result)
+  
+      setPlayerCards(result.playerCards);
+      setBankerCards(result.bankerCards);
+      setGameHistory(prev => [result.winner, ...prev.slice(0, 9)]);
+      setBalance(result.newBalance);
+      setMessage(result.message); 
 
-    // Initial 2 cards
-    let pCards = [drawCard(), drawCard()];
-    let bCards = [drawCard(), drawCard()];
-
-    setPlayerCards(pCards);
-    setBankerCards(bCards);
-
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    let playerTotal = calculateTotal(pCards);
-    let bankerTotal = calculateTotal(bCards);
-
-    // Third card rules
-    if (playerTotal < 8 && bankerTotal < 8) {
-      if (playerTotal <= 5) {
-        const third = drawCard();
-        pCards = [...pCards, third];
-        setPlayerCards(pCards);
-        playerTotal = calculateTotal(pCards);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const ptc = third.value;
-        if (
-          (bankerTotal <= 2) ||
-          (bankerTotal === 3 && ptc !== 8) ||
-          (bankerTotal === 4 && ptc >= 2 && ptc <= 7) ||
-          (bankerTotal === 5 && ptc >= 4 && ptc <= 7) ||
-          (bankerTotal === 6 && (ptc === 6 || ptc === 7))
-        ) {
-          const thirdB = drawCard();
-          bCards = [...bCards, thirdB];
-          setBankerCards(bCards);
-          bankerTotal = calculateTotal(bCards);
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      } else if (bankerTotal <= 5) {
-        const thirdB = drawCard();
-        bCards = [...bCards, thirdB];
-        setBankerCards(bCards);
-        bankerTotal = calculateTotal(bCards);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      if (result.WinAmount > 0) {
+        setWinAmount(result.WinAmount);
+        setShowWin(true);
+        setTimeout(() => setShowWin(false), 3000);
       }
+  
+    } catch (err) {
+      console.error("Baccarat API failed:", err);
+      setMessage("Something went wrong. Try again.");
+    } finally {
+      setIsDealing(false);
+      setRoundNumber(prev => prev + 1);
+      setTimeout(() => {
+        setBet(null);
+        setMessage("Place your bet for the next round");
+      }, 4000);
     }
-
-    // Determine winner
-    let winner: BetType;
-    if (playerTotal > bankerTotal) winner = 'Player';
-    else if (bankerTotal > playerTotal) winner = 'Banker';
-    else winner = 'Tie';
-
-    setGameHistory(prev => [winner, ...prev.slice(0, 9)]);
-
-    // Calculate winnings
-    let payout = 0;
-    if (bet.type === winner) {
-      if (winner === 'Player') payout = bet.amount * 2; // 1:1
-      else if (winner === 'Banker') payout = Math.floor(bet.amount * 1.95); // 1:1 minus 5% commission
-      else if (winner === 'Tie') payout = bet.amount * 9; // 8:1
-      
-      setCoins(prev => prev + payout);
-      setWinAmount(payout - bet.amount);
-      setShowWin(true);
-      setMessage(`🎉 ${winner} wins! You won $${payout - bet.amount}!`);
-      
-      setTimeout(() => setShowWin(false), 3000);
-    } else {
-      setMessage(`${winner} wins. Better luck next round!`);
-    }
-
-    setIsDealing(false);
-    setRoundNumber(prev => prev + 1);
-    
-    // Clear bet after 3 seconds
-    setTimeout(() => {
-      setBet(null);
-      setMessage('Place your bet for the next round');
-    }, 4000);
   };
 
   const clearBet = () => {
@@ -309,7 +222,7 @@ const PremiumBaccarat = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-slate-900 to-emerald-900 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-gradient-to-br from-blue-900 via-pink-500 to-purple-800 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-repeat" style={{
@@ -333,30 +246,19 @@ const PremiumBaccarat = () => {
 
       <div className="container mx-auto px-4 py-6 relative z-10">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-400 to-gold-300 mb-2 animate-pulse">
-            BACCARAT ROYALE
-          </h1>
-          <div className="text-xl text-gold-200">Premium Casino Experience</div>
-          <div className="text-lg text-gray-300 mt-2">Round #{roundNumber}</div>
-        </div>
-
-        {/* Game Stats */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-8 bg-black/40 rounded-2xl p-6 border-2 border-gold-500/30">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-gold-400">${coins.toLocaleString()}</div>
-              <div className="text-sm text-gray-300">BALANCE</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">${bet?.amount || 0}</div>
-              <div className="text-sm text-gray-300">CURRENT BET</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-400">{gameHistory.length}</div>
-              <div className="text-sm text-gray-300">ROUNDS PLAYED</div>
-            </div>
-          </div>
+        <div className="text-center mb-8 relative z-10">
+          <motion.h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-blue-900 mb-2"
+            animate={{ 
+              textShadow: [
+                "0 0 20px pink",
+                "0 0 40px purple, 0 0 60px violet",
+                "0 0 20px violet"
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            PREMIUM BACCARAT
+          </motion.h1>
         </div>
 
         {/* Game History */}
@@ -369,8 +271,8 @@ const PremiumBaccarat = () => {
                   <div
                     key={index}
                     className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xs border-2 ${
-                      result === 'Player' ? 'bg-blue-600 border-blue-400' :
-                      result === 'Banker' ? 'bg-red-600 border-red-400' :
+                      result === BetType.Player ? 'bg-blue-600 border-blue-400' :
+                      result === BetType.Banker ? 'bg-red-600 border-red-400' :
                       'bg-green-600 border-green-400'
                     } ${index === 0 ? 'ring-2 ring-gold-400 scale-110' : ''}`}
                   >
@@ -383,7 +285,25 @@ const PremiumBaccarat = () => {
         )}
 
         {/* Main Game Area */}
-        <div className="max-w-6xl mx-auto bg-gradient-to-br from-green-800 to-green-900 rounded-3xl border-4 border-gold-600 shadow-2xl p-8 mb-8">
+        <div className="max-w-6xl mx-auto bg-gradient-to-br from-pink-800 to-purple-400 rounded-3xl border-4 border-gold-600 shadow-2xl p-8 mb-8">
+          
+          {/* Game Stats */}
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center gap-8 bg-black/40 rounded-2xl p-6 border-2 border-gold-500/30">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gold-400">${balance.toLocaleString()}</div>
+              <div className="text-sm text-gray-300">BALANCE</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-400">${bet?.amount || 0}</div>
+              <div className="text-sm text-gray-300">CURRENT BET</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-400">{gameHistory.length}</div>
+              <div className="text-sm text-gray-300">ROUNDS PLAYED</div>
+            </div>
+          </div>
+        </div>
           {/* Card Areas */}
           <div className="flex justify-center gap-16 mb-8">
             <ScoreDisplay 
@@ -394,7 +314,7 @@ const PremiumBaccarat = () => {
             <ScoreDisplay 
               cards={bankerCards} 
               title="BANKER" 
-              color="text-red-400"
+              color="text-pink-400"
             />
           </div>
 
@@ -410,43 +330,30 @@ const PremiumBaccarat = () => {
           {/* Betting Areas */}
           <div className="grid grid-cols-3 gap-6 mb-8">
             <BettingArea 
-              type="Player" 
+              type={BetType.Player}
               bet={bet} 
               onBet={placeBet} 
               payout="Pays 1:1"
             />
             <BettingArea 
-              type="Banker" 
+              type={BetType.Banker} 
               bet={bet} 
               onBet={placeBet} 
               payout="Pays 1:1 (-5%)"
             />
             <BettingArea 
-              type="Tie" 
+              type={BetType.Tie}
               bet={bet} 
               onBet={placeBet} 
               payout="Pays 8:1"
             />
           </div>
+          
         </div>
 
         {/* Controls */}
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Chips */}
-            <div className="flex-1 bg-black/40 rounded-2xl p-6 border border-gold-500/30">
-              <div className="text-white font-bold mb-4 text-center text-xl">SELECT CHIP</div>
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {[10, 25, 50, 100, 250, 500].map(value => (
-                  <ChipComponent
-                    key={value}
-                    value={value}
-                    selected={selectedChip === value}
-                    onClick={setSelectedChip}
-                  />
-                ))}
-              </div>
-            </div>
 
             {/* Action Buttons */}
             <div className="flex-1 bg-black/40 rounded-2xl p-6 border border-gold-500/30">
@@ -486,6 +393,21 @@ const PremiumBaccarat = () => {
                 </div>
               )}
             </div>
+            
+            {/* Chips */}
+            <div className="flex-1 bg-black/40 rounded-2xl p-6 border border-gold-500/30">
+              <div className="text-white font-bold mb-4 text-center text-xl">SELECT CHIP</div>
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {[10, 25, 50, 100, 250, 500].map(value => (
+                  <ChipComponent
+                    key={value}
+                    value={value}
+                    selected={selectedChip === value}
+                    onClick={setSelectedChip}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -498,7 +420,7 @@ const PremiumBaccarat = () => {
               <div className="text-sm">Pays 1:1 • House Edge 1.24%</div>
             </div>
             <div className="text-white">
-              <div className="font-semibold text-red-400 mb-2">BANKER BET</div>
+              <div className="font-semibold text-pink-400 mb-2">BANKER BET</div>
               <div className="text-sm">Pays 1:1 minus 5% • House Edge 1.06%</div>
             </div>
             <div className="text-white">
