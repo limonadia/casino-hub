@@ -54,4 +54,9 @@ func RegisterRoutes(r *mux.Router) {
 	keno.Use(handlers.AuthMiddleWare)
 	keno.HandleFunc("/play", handlers.PlayKeno).Methods("POST")
 
+	//hilo
+	hilo := api.PathPrefix("/hilo").Subrouter()
+	hilo.Use(handlers.AuthMiddleWare)
+	hilo.HandleFunc("/play", handlers.PlayHiLo).Methods("POST")
+
 }
