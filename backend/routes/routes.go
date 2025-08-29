@@ -49,4 +49,9 @@ func RegisterRoutes(r *mux.Router) {
 	progressiveSlot.HandleFunc("/play", handlers.ProgressiveSlotHandler).Methods("POST")
 	http.Handle("/api/progressive-slot", handlers.RecoverMiddleware(http.HandlerFunc(handlers.ProgressiveSlotHandler)))
 
+	//keno
+	keno := api.PathPrefix("/keno").Subrouter()
+	keno.Use(handlers.AuthMiddleWare)
+	keno.HandleFunc("/play", handlers.PlayKeno).Methods("POST")
+
 }

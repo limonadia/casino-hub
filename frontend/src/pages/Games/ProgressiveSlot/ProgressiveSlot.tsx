@@ -115,14 +115,14 @@ const PremiumSlotMachine = () => {
 
       {/* Stats Bar */}
       <div className="max-w-6xl mx-auto mb-8 w-full">
-      <div className="flex justify-center mb-6">
-                <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-pink-500 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
-                    <div className="text-sm text-grey-300">COINS</div>
-                  </div>
-                </div>
-              </div>
+        <div className="flex justify-center mb-6">
+          <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-pink-500 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
+              <div className="text-sm text-grey-300">COINS</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Game Area */}

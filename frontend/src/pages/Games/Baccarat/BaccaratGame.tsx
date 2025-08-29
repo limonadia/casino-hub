@@ -291,14 +291,6 @@ const PremiumBaccarat = () => {
               <div className="text-3xl font-bold text-gold-400 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
               <div className="text-sm text-gray-300">COINS</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">{bet?.amount || 0}</div>
-              <div className="text-sm text-gray-300">CURRENT BET</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-400">{gameHistory.length}</div>
-              <div className="text-sm text-gray-300">ROUNDS PLAYED</div>
-            </div>
           </div>
         </div>
           {/* Card Areas */}
