@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import './Baccarat.css'
 import { useAuth } from '../../../services/authContext';
 import { baccaratService, BetType } from '../../../services/baccaratService';
 import { motion } from 'framer-motion';
@@ -110,7 +109,7 @@ const BettingArea = ({ type, bet, onBet, payout }: {
       
       {isActive && bet && (
         <div className="absolute -top-2 -right-2 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-sm border-2 border-yellow-300 animate-pulse">
-          ${bet.amount}
+          <span className="material-symbols-outlined">poker_chip</span>{bet.amount}
         </div>
       )}
     </button>
@@ -161,14 +160,12 @@ const PremiumBaccarat = () => {
   const [roundNumber, setRoundNumber] = useState(1);
   const { token, balance, setBalance } = useAuth(); 
 
-  const calculateTotal = (cards: Card[]) => cards.reduce((sum, c) => sum + c.value, 0) % 10;
-
   const placeBet = (betType: BetType) => {
     if (coins < selectedChip || isDealing) return;
     
     setBet({ type: betType, amount: selectedChip });
     setCoins(prev => prev - selectedChip);
-    setMessage(`Bet placed: $${selectedChip} on ${betType}`);
+    setMessage(`Bet placed: ${selectedChip} on ${betType}`);
   };
 
   const deal = async () => {
@@ -291,11 +288,11 @@ const PremiumBaccarat = () => {
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-8 bg-black/40 rounded-2xl p-6 border-2 border-gold-500/30">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gold-400">${balance.toLocaleString()}</div>
-              <div className="text-sm text-gray-300">BALANCE</div>
+              <div className="text-3xl font-bold text-gold-400 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
+              <div className="text-sm text-gray-300">COINS</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">${bet?.amount || 0}</div>
+              <div className="text-3xl font-bold text-green-400">{bet?.amount || 0}</div>
               <div className="text-sm text-gray-300">CURRENT BET</div>
             </div>
             <div className="text-center">
@@ -387,8 +384,8 @@ const PremiumBaccarat = () => {
               {bet && (
                 <div className="mt-6 pt-4 border-t border-gray-600">
                   <div className="text-white font-semibold mb-2">CURRENT BET:</div>
-                  <div className="text-gold-400 font-bold">
-                    ${bet.amount} on {bet.type}
+                  <div className="text-gold-400 font-bold flex-items-center">
+                  <span className="material-symbols-outlined">poker_chip</span>{bet.amount} on {bet.type}
                   </div>
                 </div>
               )}

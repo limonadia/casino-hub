@@ -15,7 +15,7 @@ function Games() {
     <GameCard title="Blackjack" path="/games/blackjack" imgSrc={blackjack}/>
     <GameCard title="Roulette" path="/games/roulette" imgSrc={roulette}/>
     <GameCard title="Baccarat" path="/games/baccarat" imgSrc={baccarat}/>
-    <GameCard title="Progressive Slot" path="/games/progressive-slot" imgSrc={slot1}/>
+    <GameCard title="Winner Slots" path="/games/progressive-slot" imgSrc={slot1}/>
     <GameCard title="Keno" path="/games/keno" imgSrc={keno}/>
     <GameCard title="Scratch card" path="/games/scratch" imgSrc={scratch}/>
     <GameCard title="Hi-Lo" path="/games/high-low" imgSrc={hi_lo}/>

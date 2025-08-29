@@ -1,9 +1,0 @@
-.backface-hidden {
-    backface-visibility: hidden;
-  }
-  .rotateY-0 {
-    transform: rotateY(0deg);
-  }
-  .rotateY-180 {
-    transform: rotateY(180deg);
-  }

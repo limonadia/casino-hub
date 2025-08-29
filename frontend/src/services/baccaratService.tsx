@@ -8,9 +8,6 @@ export enum BetType {
 
 export class BaccaratService extends ApiService {
     async playRound(type: BetType, amount: number, token: string){
-        console.log("betType", type)
-        console.log("amount", amount)
-
         return await this.post("/baccarat/play",{ type, amount, token })
     }
 }

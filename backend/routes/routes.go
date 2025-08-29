@@ -2,6 +2,7 @@ package routes
 
 import (
 	"casino-hub/backend/handlers"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -41,4 +42,11 @@ func RegisterRoutes(r *mux.Router) {
 	baccarat := api.PathPrefix("/baccarat").Subrouter()
 	baccarat.Use(handlers.AuthMiddleWare)
 	baccarat.HandleFunc("/play", handlers.PlayBaccarat).Methods("POST")
+
+	//progressiveSlot
+	progressiveSlot := api.PathPrefix("/progressiveSlot").Subrouter()
+	progressiveSlot.Use(handlers.AuthMiddleWare)
+	progressiveSlot.HandleFunc("/play", handlers.ProgressiveSlotHandler).Methods("POST")
+	http.Handle("/api/progressive-slot", handlers.RecoverMiddleware(http.HandlerFunc(handlers.ProgressiveSlotHandler)))
+
 }

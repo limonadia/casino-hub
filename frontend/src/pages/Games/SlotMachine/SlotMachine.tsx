@@ -174,11 +174,11 @@ const SlotMachine = () => {
           <div className="grid grid-cols-2 gap-4 mb-6 text-center">
             <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-4 border-2 border-green-400">
               <div className="text-green-200 text-sm font-semibold">COINS</div>
-              <div className="text-2xl font-bold text-white">{coins.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-white flex items-center"><span className="material-symbols-outlined">poker_chip</span>{coins.toLocaleString()}</div>
             </div>
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 border-2 border-blue-400">
               <div className="text-blue-200 text-sm font-semibold">BET</div>
-              <div className="text-2xl font-bold text-white">{bet}</div>
+              <div className="text-2xl font-bold text-white flex items-center justify-center"><span className="material-symbols-outlined">poker_chip</span>{bet}</div>
             </div>
           </div>
 
@@ -233,8 +233,8 @@ const SlotMachine = () => {
             </motion.button>
           </div>
 
-          {showWin && (<div className="text-3xl text-green-400 font-bold mt-2">
-            +{winAmount.toLocaleString()} COINS!
+          {showWin && (<div className="text-3xl text-green-400 font-bold mt-2 flex items-center">
+            +<span className="material-symbols-outlined">poker_chip</span>{winAmount.toLocaleString()} COINS!
           </div>)}
 
           {coins < bet && (

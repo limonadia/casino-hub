@@ -186,7 +186,7 @@ const BlackjackGame = () => {
                 transition={{ duration: 0.5, repeat: 2 }}>
                   {message}
                 {winAmount > 0 && (
-                  <span className="ml-2 text-green-400 font-bold">+{winAmount}</span>
+                  <span className="ml-2 text-green-400 font-bold flex items-center justify-center">+<span className="material-symbols-outlined">poker_chip</span>{winAmount}</span>
                 )}
               </motion.div>
             </div>
@@ -213,7 +213,7 @@ const BlackjackGame = () => {
               <div className="flex justify-center mb-6">
                 <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">{balance.toLocaleString()}</div>
+                    <div className="text-2xl font-bold text-blue-400 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
                     <div className="text-sm text-gray-300">COINS</div>
                   </div>
                 </div>
@@ -225,8 +225,8 @@ const BlackjackGame = () => {
                     <button onClick={() => setBet(Math.max(25, bet - 25))} disabled={!gameOver} className="w-full sm:w-auto px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500 disabled:opacity-50 font-bold">
                       -25
                     </button>
-                    <div className="w-full sm:w-auto bg-black/50 px-4 py-2 rounded-lg text-yellow-400 font-bold min-w-16 text-center">
-                      {bet}
+                    <div className="w-full sm:w-auto bg-black/50 px-4 py-2 rounded-lg text-yellow-400 font-bold min-w-16 text-center flex items-center">
+                    <span className="material-symbols-outlined">poker_chip</span>{bet}
                     </div>
                     <button onClick={() => setBet(Math.min(500, balance, bet + 25))} disabled={!gameOver} className="w-full sm:w-auto px-3 py-1 bg-green-600 text-white rounded hover:bg-green-500 disabled:opacity-50 font-bold">
                       +25
