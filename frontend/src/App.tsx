@@ -27,7 +27,7 @@ function App() {
 
 return (
       <div className="app-container">
-        <Navbar balance={balance} />
+        <Navbar/>
         <div className="main-layout">
           <div className='h-full hidden md:block'>
             <SideBarComponent/>

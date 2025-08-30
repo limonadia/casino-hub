@@ -36,14 +36,13 @@ const SlotReel = ({ symbols, isSpinning, finalSymbol, spinDuration }:{ symbols: 
   
 
   return (
-    <div className="relative w-24 h-32 bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg border-2 border-yellow-500 overflow-hidden shadow-2xl">
-      <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 to-transparent"></div>
+    <div className="relative w-24 h-32 bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg border-2 border-pink-500 overflow-hidden shadow-2xl">
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-400/10 to-transparent"></div>
       <div className={`flex items-center justify-center h-full transition-all duration-300 ${isSpinning ? 'animate-bounce' : ''}`}>
         <div className="text-4xl drop-shadow-lg">
           {symbols[isSpinning ? currentSymbol : finalSymbol].emoji}
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
     </div>
   );
 };
@@ -116,7 +115,7 @@ const PremiumSlotMachine = () => {
       {/* Stats Bar */}
       <div className="max-w-6xl mx-auto mb-8 w-full">
         <div className="flex justify-center mb-6">
-          <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
+          <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-pink-500/30">
             <div className="text-center">
               <div className="text-2xl font-bold text-pink-500 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
               <div className="text-sm text-grey-300">COINS</div>
@@ -131,7 +130,7 @@ const PremiumSlotMachine = () => {
             +<span className="material-symbols-outlined">poker_chip</span>{lastWin.toLocaleString()}
           </div>)}
         {/* Slot Machine */}
-        <div className="bg-gradient-to-b from-slate-800 to-slate-900 rounded-3xl p-8 mb-8 border-4 border-yellow-500 shadow-2xl">
+        <div className="bg-gradient-to-br from-blue-900 via-pink-500 to-purple-800 rounded-3xl p-8 mb-8 border-4 border-pink-500 shadow-2xl">
           <div className="flex justify-center gap-4 mb-8">
           {reelResults?.map((symbolIndex: number, reelIndex: number) => (
             <SlotReel
@@ -197,11 +196,11 @@ const PremiumSlotMachine = () => {
         </div>
 
         {/* Paytable */}
-        <div className="bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl p-6 border-2 border-slate-600">
+        <div className="bg-black/40 backdrop-blur-sm p-8 border border-pink-500/30 rounded-2xl p-6 border-2">
           <h3 className="text-2xl font-bold text-yellow-400 mb-4 text-center">💰 PAYTABLE 💰</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {SYMBOLS.map(symbol => (
-              <div key={symbol.id} className="bg-slate-700 rounded-lg p-3 text-center">
+              <div key={symbol.id} className="border-2 border-pink-500/30 rounded-lg p-3 text-center">
                 <div className="text-3xl mb-2">{symbol.emoji}</div>
                 <div className="text-white font-bold">{symbol.name}</div>
                 <div className="text-yellow-400 text-sm">{symbol.multiplier}x bet</div>

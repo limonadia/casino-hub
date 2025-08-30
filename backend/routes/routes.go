@@ -59,4 +59,10 @@ func RegisterRoutes(r *mux.Router) {
 	hilo.Use(handlers.AuthMiddleWare)
 	hilo.HandleFunc("/play", handlers.PlayHiLo).Methods("POST")
 
+	//roulette
+	roulette := api.PathPrefix("/roulette").Subrouter()
+	roulette.Use(handlers.AuthMiddleWare)
+	roulette.HandleFunc("/spin", handlers.SpinRoulette).Methods("POST")
+
+
 }
