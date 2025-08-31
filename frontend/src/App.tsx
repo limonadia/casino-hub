@@ -11,7 +11,6 @@ import SideBarComponent from './components/Sidebar/SidebarComponent';
 import BaccaratGame from './pages/Games/Baccarat/BaccaratGame';
 import ProgressiveSlot from './pages/Games/ProgressiveSlot/ProgressiveSlot';
 import Keno from './pages/Games/Keno/Keno';
-import ScratchGame from './pages/Games/Scratch/ScratchCard';
 import UpgradedHighLowGame from './pages/Games/HighLow/HighLowGame';
 import CasinoRoulette from './pages/Games/Roulette/Roulette';
 import Login from './pages/Login/Login';
@@ -46,7 +45,6 @@ return (
               <Route path="/games/baccarat" element={<ProtectedRoute><BaccaratGame /></ProtectedRoute>} />
               <Route path="/games/progressive-slot" element={<ProtectedRoute><ProgressiveSlot /></ProtectedRoute>} />
               <Route path="/games/keno" element={<ProtectedRoute><Keno /></ProtectedRoute>} />
-              <Route path="/games/scratch" element={<ProtectedRoute><ScratchGame /></ProtectedRoute>} />
               <Route path="/games/high-low" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
               <Route path="/favourite" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
               <Route path="/recent" element={<ProtectedRoute><Recent/></ProtectedRoute>} />

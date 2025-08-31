@@ -5,7 +5,6 @@ import blackjack from "../../assets/blackjack.avif"
 import roulette from "../../assets/roulette.jpg"
 import baccarat from "../../assets/baccarat.avif"
 import keno from "../../assets/keno.png"
-import scratch from "../../assets/scratch.webp"
 import hi_lo from "../../assets/hi-lo.webp"
 
 function Games() {
@@ -17,7 +16,6 @@ function Games() {
     <GameCard title="Baccarat" path="/games/baccarat" imgSrc={baccarat}/>
     <GameCard title="Winner Slots" path="/games/progressive-slot" imgSrc={slot1}/>
     <GameCard title="Keno" path="/games/keno" imgSrc={keno}/>
-    <GameCard title="Scratch card" path="/games/scratch" imgSrc={scratch}/>
     <GameCard title="Hi-Lo" path="/games/high-low" imgSrc={hi_lo}/>
     </div>
     );
