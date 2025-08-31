@@ -34,10 +34,12 @@ function BannerCard({imgSrc, buttonText, description, link}: props){
                         {description}
                     </Typography>
                     <div className='flex w-1/4 flex-col items-start'>
-                    <ButtonComponent buttonText={buttonText} onClick={redirect}/>
                     </div>
                     </CardContent>
+
                 </CardActionArea>
+                <ButtonComponent buttonText={buttonText} onClick={redirect}/>
+
                 </Card>
         </>
     )

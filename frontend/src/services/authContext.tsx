@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const userData = await userService.getProfile();
           setUser(userData);
         } else {
-          console.log('No token found');
           setUser(null);
         }
       } catch (error) {

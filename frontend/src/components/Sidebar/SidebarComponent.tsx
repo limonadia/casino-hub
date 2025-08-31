@@ -44,24 +44,19 @@ function SideBarComponent() {
         <MenuItem component={<Link to="/games" />} className={isActive("/games") ? "active-item-link" : ""}>
           <span className="material-symbols-outlined text-casinoPink px-7">casino</span> Games
         </MenuItem>
-
         {isLoggedIn && (
           <>
             <MenuItem component={<Link to="/favourites" />} className={isActive("/favourites") ? "active-item-link" : ""}>
               <span className="material-symbols-outlined text-casinoPink px-7">bookmark_heart</span> Favourites
             </MenuItem>
-            <MenuItem component={<Link to="/recent" />} className={isActive("/recent") ? "active-item-link" : ""}>
-              <span className="material-symbols-outlined text-casinoPink px-7">history_2</span> Recent
+            <MenuItem component={<Link to="/promotions" />} className={isActive("/promotions") ? "active-item-link" : ""}>
+              <span className="material-symbols-outlined text-casinoPink px-7">featured_seasonal_and_gifts</span> Promotions
             </MenuItem>
             <MenuItem component={<Link to="/profile" />} className={isActive("/profile") ? "active-item-link" : ""}>
               <span className="material-symbols-outlined text-casinoPink px-7">person</span> Profile
             </MenuItem>
           </>
         )}
-        
-        <MenuItem component={<Link to="/promotions" />} className={isActive("/promotions") ? "active-item-link" : ""}>
-          <span className="material-symbols-outlined text-casinoPink px-7">featured_seasonal_and_gifts</span> Promotions
-        </MenuItem>
         <MenuItem component={<Link to="/contact" />} className={isActive("/contact") ? "active-item-link" : ""}>
           <span className="material-symbols-outlined text-casinoPink px-7">support_agent</span> Contact Us
         </MenuItem>

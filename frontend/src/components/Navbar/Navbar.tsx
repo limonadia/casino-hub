@@ -1,19 +1,18 @@
 import { NavLink } from "react-router-dom";
 import Balance from "../Balance/Balance";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import './Navbar.css';
 import LanguageSelect from "../LanguageSelect/LanguageSelect";
 import ButtonComponent from "../Button/Button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../services/authContext";
-import { userService } from "../../services/userService";
 
 function Navbar() {
     const { token, balance } = useAuth();
     const [open, setOpen] = useState(false);
     const linkClasses = ({ isActive }: {isActive: boolean}) => isActive ? "active-link" : "";
     const navigate = useNavigate();
-
+    const isLoggedIn = !!token;
     const toLogin = () => {
         navigate("/login"); 
       };
@@ -46,14 +45,21 @@ return (
         {open && (
             <div className="w-full md:hidden flex flex-col justify-center items-center">
                 <div className="md:hidden flex flex-col gap-4 mt-4 w-max">
-                <NavLink to="/" className={linkClasses}>Home</NavLink>
-                <NavLink to="/games" className={linkClasses}>Games</NavLink>
-                <NavLink to="/favourites" className={linkClasses}>Favourites</NavLink>
-                <NavLink to="/recent" className={linkClasses}>Recent</NavLink>
-                <NavLink to="/profile" className={linkClasses}>Profile</NavLink>
-                <NavLink to="/promotions" className={linkClasses}>Promotions</NavLink>
-                <NavLink to="/contact" className={linkClasses}>Contact Us</NavLink>
-                <NavLink to="/signout" className={linkClasses}>Sign Out / Login</NavLink>
+                    <NavLink to="/" className={linkClasses}>Home</NavLink>
+                    <NavLink to="/games" className={linkClasses}>Games</NavLink>
+                    {isLoggedIn && (<>
+                        <NavLink to="/favourites" className={linkClasses}>Favourites</NavLink>
+                        <NavLink to="/promotions" className={linkClasses}>Promotions</NavLink>
+                        <NavLink to="/profile" className={linkClasses}>Profile</NavLink></>
+                    )}
+                    <NavLink to="/contact" className={linkClasses}>Contact Us</NavLink>
+                    <NavLink to={isLoggedIn ? "/signout" : "/login"} className={linkClasses} onClick={() => { 
+                        if (isLoggedIn) {
+                            localStorage.removeItem("token");
+                            window.location.href = "/";
+                            }}}>
+                    {isLoggedIn ? "Sign Out" : "Login"}
+                    </NavLink>                
                 </div>
                 <div className="flex flex-row w-full justify-between mt-3"><LanguageSelect/> <Balance balance={balance} /></div>
             </div>
