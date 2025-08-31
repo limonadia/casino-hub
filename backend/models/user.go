@@ -18,4 +18,5 @@ type User struct {
 	LastActive  time.Time `json:"lastActive"`
     LastFreeCoins time.Time `json:"lastFreeCoins"`  
 	CreatedAt time.Time `json:"createdAt"`
+	Favourites []string `json:"favourites"`
 }

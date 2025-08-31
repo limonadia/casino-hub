@@ -222,16 +222,6 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		&lastFreeCoins,
 	)
 
-	if lastActive.Valid {
-		user.LastActive = lastActive.Time
-	}
-	if createdAt.Valid {
-		user.CreatedAt = createdAt.Time
-	}
-	if lastFreeCoins.Valid {
-		user.LastFreeCoins = lastFreeCoins.Time
-	}
-	
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "User not found", http.StatusNotFound)
@@ -242,15 +232,45 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if the nullable fields are valid and set them
+	// Set nullable fields if valid
 	if name.Valid {
 		user.Name = name.String
 	}
 	if lastActive.Valid {
 		user.LastActive = lastActive.Time
 	}
+	if createdAt.Valid {
+		user.CreatedAt = createdAt.Time
+	}
 	if lastFreeCoins.Valid {
 		user.LastFreeCoins = lastFreeCoins.Time
+	}
+
+	// Get user's favourites
+	rows, err := database.DB.Query(
+		`SELECT game_name FROM user_favourites WHERE user_id = ?`,
+		userID,
+	)
+	if err != nil {
+		log.Println("Error querying favourites:", err)
+		// Don't fail the whole request, just set empty favourites
+		user.Favourites = []string{}
+	} else {
+		defer rows.Close()
+
+		var favourites []string
+		for rows.Next() {
+			var gameName string
+			if err := rows.Scan(&gameName); err == nil {
+				favourites = append(favourites, gameName)
+			}
+		}
+
+		// Initialize empty array if no favourites found
+		if favourites == nil {
+			favourites = []string{}
+		}
+		user.Favourites = favourites
 	}
 
 	// Do not return the password, even if the model has the field

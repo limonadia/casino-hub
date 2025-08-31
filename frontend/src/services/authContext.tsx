@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { userService } from "./userService";
+import type { User } from "../models/user";
 
 interface AuthContextType {
   token: string | null;
@@ -9,6 +10,9 @@ interface AuthContextType {
   updateBalance: (amount: number) => Promise<void>;
   refreshBalance: () => Promise<void>;
   isUpdatingBalance: boolean;
+  user: User | null;
+  setUser: (user: User | null) => void; 
+  isLoading: boolean; // Add this to the interface
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,17 +27,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [balance, setBalance] = useState(0);
   const [isUpdatingBalance, setIsUpdatingBalance] = useState(false);
+  const [user, setUser] = useState<User | null>(null); 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedToken = localStorage.getItem('token'); 
+        
+        if (storedToken) {
+          const userData = await userService.getProfile();
+          setUser(userData);
+        } else {
+          console.log('No token found');
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   useEffect(() => {
     const fetchBalance = async () => {
       if (!token) {
         setBalance(0);
+        setUser(null); 
         return;
       }
       
       try {
         const profile = await userService.getProfile();
         setBalance(profile.balance);
+        setUser(profile);
       } catch (err) {
         console.error("Failed to fetch balance:", err);
       }
@@ -60,6 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const profile = await userService.getProfile();
       setBalance(profile.balance);
+      setUser(profile);
     } catch (err) {
       console.error("Failed to refresh balance:", err);
       throw err;
@@ -74,7 +108,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setBalance,
       updateBalance,
       refreshBalance,
-      isUpdatingBalance
+      isUpdatingBalance,
+      user,
+      setUser,
+      isLoading 
     }}>
       {children}
     </AuthContext.Provider>

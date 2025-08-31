@@ -45,7 +45,7 @@ return (
               <Route path="/games/progressive-slot" element={<ProtectedRoute><ProgressiveSlot /></ProtectedRoute>} />
               <Route path="/games/keno" element={<ProtectedRoute><Keno /></ProtectedRoute>} />
               <Route path="/games/high-low" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
-              <Route path="/history" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
+              <Route path="/favourites" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
               <Route path="/promotions" element={<Promotions/>} />
               <Route path="/contact" element={<Contact/>}/>
               <Route path="/login" element={<Login />} />

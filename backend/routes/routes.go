@@ -64,5 +64,8 @@ func RegisterRoutes(r *mux.Router) {
 	roulette.Use(handlers.AuthMiddleWare)
 	roulette.HandleFunc("/spin", handlers.SpinRoulette).Methods("POST")
 
-
+	//favourites
+	favourites := api.PathPrefix("/favourites").Subrouter()
+	favourites.Use(handlers.AuthMiddleWare)
+	favourites.HandleFunc("/toggle", handlers.ToggleFavourite).Methods("POST")
 }
