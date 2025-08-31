@@ -18,7 +18,6 @@ import Signup from './pages/Login/Signup';
 import ProtectedRoute from './services/ProtectedRoute';
 import Contact from './pages/Contact/Contact';
 import Promotions from './pages/Promotions/Promotions';
-import Recent from './pages/Recent/Recent';
 import Favourites from './pages/Favourites/Favourites';
 
 function App() {
@@ -46,8 +45,7 @@ return (
               <Route path="/games/progressive-slot" element={<ProtectedRoute><ProgressiveSlot /></ProtectedRoute>} />
               <Route path="/games/keno" element={<ProtectedRoute><Keno /></ProtectedRoute>} />
               <Route path="/games/high-low" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
-              <Route path="/favourite" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
-              <Route path="/recent" element={<ProtectedRoute><Recent/></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
               <Route path="/promotions" element={<Promotions/>} />
               <Route path="/contact" element={<Contact/>}/>
               <Route path="/login" element={<Login />} />
