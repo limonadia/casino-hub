@@ -4,6 +4,7 @@ import (
 	"casino-hub/backend/database"
 	"casino-hub/backend/models"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -90,6 +91,12 @@ func PlayKeno(w http.ResponseWriter, r *http.Request){
 	err = database.DB.QueryRow("SELECT balance FROM users WHERE id=?", userID).Scan(&balance)
 	if err != nil {
 		http.Error(w, "Could not fetch balance", http.StatusInternalServerError)
+		return
+	}
+
+	if err := RecordGamePlay(userID, "Keno"); err != nil {
+		fmt.Println("RecordGamePlay error:", err)
+		http.Error(w, "Failed to record game play", http.StatusInternalServerError)
 		return
 	}
 

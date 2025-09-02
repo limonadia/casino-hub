@@ -152,6 +152,12 @@ func PlayBaccarat(w http.ResponseWriter, r *http.Request) {
 		Message:     message,
 	}
 
+	if err := RecordGamePlay(userID, "Baccarat"); err != nil {
+		fmt.Println("RecordGamePlay error:", err)
+		http.Error(w, "Failed to record game play", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
 }

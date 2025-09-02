@@ -42,9 +42,9 @@ return (
               <Route path="/games/blackjack" element={<ProtectedRoute><BlackjackGame /></ProtectedRoute>} />
               <Route path="/games/roulette" element={<ProtectedRoute><CasinoRoulette /></ProtectedRoute>} />
               <Route path="/games/baccarat" element={<ProtectedRoute><BaccaratGame /></ProtectedRoute>} />
-              <Route path="/games/progressive-slot" element={<ProtectedRoute><ProgressiveSlot /></ProtectedRoute>} />
+              <Route path="/games/progressiveSlot" element={<ProtectedRoute><ProgressiveSlot /></ProtectedRoute>} />
               <Route path="/games/keno" element={<ProtectedRoute><Keno /></ProtectedRoute>} />
-              <Route path="/games/high-low" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
+              <Route path="/games/hiLo" element={<ProtectedRoute><UpgradedHighLowGame /></ProtectedRoute>} />
               <Route path="/favourites" element={<ProtectedRoute><Favourites/></ProtectedRoute>} />
               <Route path="/promotions" element={<ProtectedRoute><Promotions/></ProtectedRoute>} />
               <Route path="/contact" element={<Contact/>}/>

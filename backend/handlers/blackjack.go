@@ -4,6 +4,7 @@ import (
 	"casino-hub/backend/database"
 	"casino-hub/backend/models"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -145,6 +146,14 @@ func StartGameHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if state.GameOver {
+		if err := RecordGamePlay(userID, "Blackjack"); err != nil {
+			fmt.Println("RecordGamePlay error:", err)
+			http.Error(w, "Failed to record game play", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(state)
 }
@@ -203,6 +212,14 @@ func HitHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+
+		if state.GameOver {
+			if err := RecordGamePlay(userID, "Blackjack"); err != nil {
+				fmt.Println("RecordGamePlay error:", err)
+				http.Error(w, "Failed to record game play", http.StatusInternalServerError)
+				return
+			}
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -237,6 +254,12 @@ func StandHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Could not update balance", http.StatusInternalServerError)
 			return
 		}
+	}
+
+	if err := RecordGamePlay(userID, "Blackjack"); err != nil {
+		fmt.Println("RecordGamePlay error:", err)
+		http.Error(w, "Failed to record game play", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")

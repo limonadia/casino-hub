@@ -1,6 +1,6 @@
 import Gallery from "../../components/Gallery/Gallery";
 import RedirectCard from "../../components/RedirectCard/RedirectCard";
-import slot3 from "../../assets/slot3.png";
+import slot3 from "/games/Slot.png";
 import slot2 from "../../assets/slot1.webp";
 import casino from "../../assets/closeup-slot-machine-with-pink-blue-lights_1282444-127645.avif"
 import BannerCard from "../../components/BannerCard/BannerCard";

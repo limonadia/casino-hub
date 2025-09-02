@@ -4,6 +4,7 @@ import (
 	"casino-hub/backend/database"
 	"casino-hub/backend/models"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 )
@@ -105,6 +106,12 @@ func PlayHiLo(w http.ResponseWriter, r *http.Request) {
 	_, err = database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", balance, userID)
 	if err != nil {
 		http.Error(w, "Failed to update balance", http.StatusInternalServerError)
+		return
+	}
+
+	if err := RecordGamePlay(userID, "HiLo"); err != nil {
+		fmt.Println("RecordGamePlay error:", err)
+		http.Error(w, "Failed to record game play", http.StatusInternalServerError)
 		return
 	}
 

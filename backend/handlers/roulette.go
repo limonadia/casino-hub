@@ -5,6 +5,7 @@ import (
 	"casino-hub/backend/models"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -59,6 +60,13 @@ func SpinRoulette(w http.ResponseWriter, r *http.Request){
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
 	}
+
+	if err := RecordGamePlay(userID, "Roulette"); err != nil {
+		fmt.Println("RecordGamePlay error:", err)
+		http.Error(w, "Failed to record game play", http.StatusInternalServerError)
+		return
+	}
+	
 	
 	resp := models.RouletteResponse{
 		WinningNumber: winning.N,

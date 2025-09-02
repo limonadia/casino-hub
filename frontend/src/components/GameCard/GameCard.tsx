@@ -13,7 +13,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import './GameCard.css';
 
-function GameCard({ title, imgSrc, path }: { title: string; imgSrc: string; path: string; }) {
+function GameCard({ title, imgSrc, path, showFavorites = true }: { title: string; imgSrc: string; path: string; showFavorites?: boolean}) {
     const [overlayColor, setOverlayColor] = useState('rgba(0,0,0,0.6)');
     const imgRef = useRef<HTMLImageElement | null>(null);
     const { user, setUser, isLoading } = useAuth();
@@ -77,7 +77,7 @@ function GameCard({ title, imgSrc, path }: { title: string; imgSrc: string; path
     position: 'relative',   // 👈 this fixes it
   }}
 >
-  {!isLoading && user && (
+  {!isLoading && user && showFavorites && (
     <IconButton
       onClick={handleToggleFavourite}
       sx={{

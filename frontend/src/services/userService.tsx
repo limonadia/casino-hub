@@ -1,3 +1,4 @@
+import type { RecentGame } from "../models/gamesData";
 import type { User } from "../models/user";
 import { ApiService } from "./apiService";
 
@@ -14,6 +15,10 @@ export class UserService extends ApiService {
 
       async toggleFavourite(gameName: string) {
         return await this.post("/favourites/toggle", { gameName });
+      }
+      
+      async getRecentGames(): Promise<RecentGame[]> {
+        return await this.get("/recent/games");
       }
       
 }

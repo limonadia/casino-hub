@@ -3,10 +3,10 @@ import React from 'react';
 import { type ReactNode } from 'react';
 import './Gallery.css';
 import casinoPink from "../../assets/casino-pink.avif";
-import jackpot from "../../assets/jackpot.webp";
+import jackpot from "/games/ProgressiveSlot.png";
 import slot1 from "../../assets/slot1.webp";
 import slot2 from "../../assets/slots.png";
-import slot3 from "../../assets/slot3.png";
+import slot3 from "/games/Slot.png";
 import ButtonComponent from '../Button/Button';
 import { useNavigate } from 'react-router-dom';
 
