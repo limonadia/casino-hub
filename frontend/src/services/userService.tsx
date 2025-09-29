@@ -28,6 +28,10 @@ export class UserService extends ApiService {
       async spinWheel(){
         return await this.post('/promotions/spin-wheel', {})
       }
+
+      async updateProfile(updates: Partial<User> & { password?: string }): Promise<User> {
+        return await this.put<User, typeof updates>("/users/profile", updates);
+    }
 }
 
 export const userService = new UserService();

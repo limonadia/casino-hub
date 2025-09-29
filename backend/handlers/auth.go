@@ -302,3 +302,64 @@ func RecoverMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+// UpdateProfile godoc
+// @Summary Update current user profile
+// @Description Allows logged-in users to update their profile information
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body models.User true "Updated user profile"
+// @Success 200 {object} models.User
+// @Failure 400 {string} string "Invalid request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Database error"
+// @Router /api/users/profile [put]
+func UpdateProfile(w http.ResponseWriter, r *http.Request) {
+    userID, ok := GetUserID(r.Context())
+    if !ok {
+        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        return
+    }
+
+    var updates struct {
+        Username string `json:"username"`
+        Name     string `json:"name"`
+        Email    string `json:"email"`
+        Password string `json:"password,omitempty"`
+    }
+
+    if err := json.NewDecoder(r.Body).Decode(&updates); err != nil {
+        http.Error(w, "Invalid request", http.StatusBadRequest)
+        return
+    }
+
+    var hashedPassword string
+    if updates.Password != "" {
+        hash, err := bcrypt.GenerateFromPassword([]byte(updates.Password), bcrypt.DefaultCost)
+        if err != nil {
+            http.Error(w, "Error hashing password", http.StatusInternalServerError)
+            return
+        }
+        hashedPassword = string(hash)
+    }
+
+    query := "UPDATE users SET username=?, name=?, email=?"
+    args := []interface{}{updates.Username, updates.Name, updates.Email}
+
+    if hashedPassword != "" {
+        query += ", password=?"
+        args = append(args, hashedPassword)
+    }
+    query += " WHERE id=?"
+    args = append(args, userID)
+
+    _, err := database.DB.Exec(query, args...)
+    if err != nil {
+        log.Println("Update error:", err)
+        http.Error(w, "Database error", http.StatusInternalServerError)
+        return
+    }
+
+    GetProfile(w, r)
+}

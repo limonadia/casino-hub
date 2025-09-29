@@ -25,6 +25,7 @@ func RegisterRoutes(r *mux.Router) {
     user := api.PathPrefix("/users").Subrouter()
     user.Use(handlers.AuthMiddleWare)
     user.HandleFunc("/profile", handlers.GetProfile).Methods("GET")
+	user.HandleFunc("/profile", handlers.UpdateProfile).Methods("PUT")
 
 	// slot
 	slot := api.PathPrefix("/slot").Subrouter()

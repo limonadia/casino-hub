@@ -12,10 +12,10 @@ export interface User extends BaseModel{
     lastActive?: Date;
     password: string;
     lastFreeCoins?: string;
-    favourites: string[];
+    favourites?: string[];
     lastCashClaim?: string | null;
     lastWheelSpin?: string | null;
-    freeGames: string[];
+    freeGames?: string[];
 }
 
 export interface LoginResponse {
