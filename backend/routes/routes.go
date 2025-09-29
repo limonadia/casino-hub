@@ -73,4 +73,11 @@ func RegisterRoutes(r *mux.Router) {
 	recent := api.PathPrefix("/recent").Subrouter()
 	recent.Use(handlers.AuthMiddleWare)
 	recent.HandleFunc("/games", handlers.GetRecentGames).Methods("GET")
+
+	// promotions
+	promotions := api.PathPrefix("/promotions").Subrouter()
+	promotions.Use(handlers.AuthMiddleWare)
+	promotions.HandleFunc("/daily-cash", handlers.ClaimDailyCash).Methods("POST")
+	promotions.HandleFunc("/spin-wheel", handlers.SpinWheel).Methods("POST")
+
 }

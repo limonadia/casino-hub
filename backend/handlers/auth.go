@@ -16,7 +16,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var jwtKey = []byte("password") //replace with env variable in production
+var jwtKey = []byte("password") 
 
 type Claims struct {
 	UserID int `json:"userId"`
@@ -35,53 +35,49 @@ type Claims struct {
 // @Failure 500 {string} string "Database error"
 // @Router /api/auth/signup [post]
 func Signup(w http.ResponseWriter, r *http.Request) {
-    var user models.User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-        http.Error(w, "Invalid request", http.StatusBadRequest)
-        return
-    }
+	var user models.User
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
 
-    // Validate required fields
-    if user.Username == "" || user.Email == "" || user.Password == "" {
-        http.Error(w, "Username, email, and password are required", http.StatusBadRequest)
-        return
-    }
+	if user.Username == "" || user.Email == "" || user.Password == "" {
+		http.Error(w, "Username, email, and password are required", http.StatusBadRequest)
+		return
+	}
 
-    // Check duplicates
-    var exists int
-    err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE username=? OR email=?", user.Username, user.Email).Scan(&exists)
-    if err != nil {
-        http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
-    if exists > 0 {
-        http.Error(w, "Username or email already exists", http.StatusBadRequest)
-        return
-    }
+	var exists int
+	err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE username=? OR email=?", user.Username, user.Email).Scan(&exists)
+	if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if exists > 0 {
+		http.Error(w, "Username or email already exists", http.StatusBadRequest)
+		return
+	}
 
-    // Hash password
-    hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-    if err != nil {
-        http.Error(w, "Error hashing password", http.StatusInternalServerError)
-        return
-    }
+	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		return
+	}
 
-    // Insert user
-    res, err := database.DB.Exec(
-        "INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES (?, ?, ?, 5000, 0, 1, 0, 0)",
-        user.Username, user.Email, string(hashed),
-    )
-    if err != nil {
-        http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
+	res, err := database.DB.Exec(
+		"INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES (?, ?, ?, 5000, 0, 1, 0, 0)",
+		user.Username, user.Email, string(hashed),
+	)
+	if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    id, _ := res.LastInsertId()
-    user.ID = int(id)
-    user.Password = "" // never return password
+	id, _ := res.LastInsertId()
+	user.ID = int(id)
+	user.Password = "" 
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(user)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
 
 
@@ -171,8 +167,6 @@ func AuthMiddleWare(next http.Handler) http.Handler {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
-
-		// Save userID in request context
 		ctx := context.WithValue(r.Context(), userIDKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -200,18 +194,21 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	// Use nullable types for database fields that can be NULL
 	var name sql.NullString
 	var lastActive, createdAt, lastFreeCoins sql.NullTime
+	
+	var lastCashClaim, lastWheelSpin time.Time
+	var freeGamesSQL sql.NullString
 
-	// Query all the necessary fields from the database
 	err := database.DB.QueryRow(`
-		SELECT id, username, email, name, balance, score, level, experience, freeSpins, lastActive, created_at, last_free_coins
+		SELECT 
+			id, username, email, name, balance, score, level, experience, freeSpins, 
+			lastActive, created_at, last_free_coins, last_cash_claim, last_wheel_spin, free_games
 		FROM users WHERE id = ?`, userID).Scan(
 		&user.ID,
 		&user.Username,
 		&user.Email,
-		&user.Name,
+		&name,
 		&user.Balance,
 		&user.Score,
 		&user.Level,
@@ -220,6 +217,9 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		&lastActive,
 		&createdAt,
 		&lastFreeCoins,
+		&lastCashClaim,
+		&lastWheelSpin,
+		&freeGamesSQL,
 	)
 
 	if err != nil {
@@ -232,7 +232,6 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Set nullable fields if valid
 	if name.Valid {
 		user.Name = name.String
 	}
@@ -246,14 +245,16 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		user.LastFreeCoins = lastFreeCoins.Time
 	}
 
-	// Get user's favourites
+	user.LastCashClaim = lastCashClaim
+	user.LastWheelSpin = lastWheelSpin
+
+
 	rows, err := database.DB.Query(
 		`SELECT game_name FROM user_favourites WHERE user_id = ?`,
 		userID,
 	)
 	if err != nil {
 		log.Println("Error querying favourites:", err)
-		// Don't fail the whole request, just set empty favourites
 		user.Favourites = []string{}
 	} else {
 		defer rows.Close()
@@ -266,14 +267,12 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		// Initialize empty array if no favourites found
 		if favourites == nil {
 			favourites = []string{}
 		}
 		user.Favourites = favourites
 	}
 
-	// Do not return the password, even if the model has the field
 	user.Password = ""
 
 	w.Header().Set("Content-Type", "application/json")
@@ -293,13 +292,13 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecoverMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        defer func() {
-            if err := recover(); err != nil {
-                log.Printf("Recovered from panic: %v\n%s", err, debug.Stack())
-                http.Error(w, "Internal server error", http.StatusInternalServerError)
-            }
-        }()
-        next.ServeHTTP(w, r)
-    })
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Printf("Recovered from panic: %v\n%s", err, debug.Stack())
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }

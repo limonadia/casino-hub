@@ -13,6 +13,9 @@ export interface User extends BaseModel{
     password: string;
     lastFreeCoins?: string;
     favourites: string[];
+    lastCashClaim?: string | null;
+    lastWheelSpin?: string | null;
+    freeGames: string[];
 }
 
 export interface LoginResponse {

@@ -11,7 +11,7 @@ interface AuthContextType {
   refreshBalance: () => Promise<void>;
   isUpdatingBalance: boolean;
   user: User | null;
-  setUser: (user: User | null) => void; 
+  setUser: (user: User | null | ((prevUser: User | null) => User | null)) => void; 
   isLoading: boolean; // Add this to the interface
 }
 
@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     fetchBalance();
   }, [token]);
+  
 
   const updateBalance = async (amount: number): Promise<void> => {
     try {

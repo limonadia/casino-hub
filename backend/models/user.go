@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -19,4 +20,7 @@ type User struct {
     LastFreeCoins time.Time `json:"lastFreeCoins"`  
 	CreatedAt time.Time `json:"createdAt"`
 	Favourites []string `json:"favourites"`
+	LastCashClaim time.Time       `json:"lastCashClaim" db:"last_cash_claim"`
+    LastWheelSpin time.Time       `json:"lastWheelSpin" db:"last_wheel_spin"`
+    FreeGames     json.RawMessage `json:"freeGames" db:"free_games"`
 }
