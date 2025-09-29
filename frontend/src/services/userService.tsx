@@ -32,6 +32,10 @@ export class UserService extends ApiService {
       async updateProfile(updates: Partial<User> & { password?: string }): Promise<User> {
         return await this.put<User, typeof updates>("/users/profile", updates);
     }
+
+    async contact(data: { title: string; description: string; phone?: string }) {
+      return await this.post("/contact", data);
+    }
 }
 
 export const userService = new UserService();

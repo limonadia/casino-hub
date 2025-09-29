@@ -7,6 +7,7 @@ import (
 
 	"casino-hub/backend/database"
 	"casino-hub/backend/routes"
+	"github.com/joho/godotenv"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 	_ "casino-hub/backend/docs"
@@ -21,6 +22,10 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+	err := godotenv.Load()
+    if err != nil {
+        log.Println("Error loading .env file")
+    }
 	// Init DB
 	database.InitDB()
 	defer database.DB.Close()

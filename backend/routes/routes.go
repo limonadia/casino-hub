@@ -14,6 +14,7 @@ func RegisterRoutes(r *mux.Router) {
 	api.HandleFunc("/signup", handlers.Signup).Methods("POST")
 	api.HandleFunc("/login", handlers.Login).Methods("POST")
 	api.HandleFunc("/logout", handlers.Logout).Methods("POST")
+	api.Handle("/contact", handlers.AuthMiddleWare(http.HandlerFunc(handlers.ContactHandler))).Methods("POST")
 
 	//Balance
 	balance := r.PathPrefix("/api/v1").Subrouter()
