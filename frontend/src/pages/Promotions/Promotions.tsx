@@ -247,7 +247,7 @@ function Promotions() {
           </div>
 
           {/* Spin the Wheel */}
-          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl hover:transform hover:-translate-y-2 transition-all duration-300">
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl md:p-8 border border-white/20 shadow-2xl hover:transform hover:-translate-y-2 transition-all duration-300">
             <h2 className="text-2xl font-bold text-yellow-400 text-center mb-4">Lucky Wheel</h2>
             <p className="text-white/90 text-center mb-6">
               Spin the wheel once every 24 hours for amazing prizes!

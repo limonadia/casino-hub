@@ -121,12 +121,12 @@ function Profile() {
   };
 
   return (
-    <div className="text-center page lg:mx-10 h-full">
-      <div className="flex justify-center items-start h-screen">
-        <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md h-2/5 flex flex-col justify-between">
+    <div className="text-center page lg:mx-10 h-screen w-screen">
+      <div className="flex justify-center items-start h-full ">
+        <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md h-4/7 flex flex-col justify-between">
           <h2 className="text-2xl font-bold mb-4 text-center text-black">Update Profile</h2>
 
-          <div className="py-5 flex items-center flex-col justify-between w-80 space-y-4 h-full">
+          <div className="py-5 flex items-center flex-col justify-between w-11/12 space-y-4 h-full">
             <TextField
               label="Username"
               type="text"
