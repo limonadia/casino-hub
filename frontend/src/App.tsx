@@ -19,6 +19,7 @@ import Contact from './pages/Contact/Contact';
 import Promotions from './pages/Promotions/Promotions';
 import Favourites from './pages/Favourites/Favourites';
 import Forgot from './pages/Login/Forgot';
+import ResetPassword from './pages/Login/ResetPassword';
 
 function App() {
 
@@ -50,6 +51,7 @@ return (
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot" element={<Forgot />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
             </Routes>
           </main>
         </div>
