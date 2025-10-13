@@ -111,6 +111,8 @@ import { useAuth } from "../../services/authContext";
                     <ButtonComponent buttonText="Login" onClick={login} disabled={!formIsValid}/>
 
                     <p className="text-black pt-3">Not a member? <Link to="/signup" className="text-casinoPink !text-casinoPink"> Signup now</Link></p> 
+                    <p className="text-xs underline pt-3"><Link to="/forgot" className="text-casinoPink !text-casinoPink"> Forgot password</Link></p> 
+
                 </div>
             </div>
         </div>

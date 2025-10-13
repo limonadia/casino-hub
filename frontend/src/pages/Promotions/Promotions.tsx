@@ -176,16 +176,9 @@ function Promotions() {
       }));
 
       checkCooldowns();
-
-      if (data.balance) {
-        setBalance(data.balance);
-      }
-
-      // Parse the reward to determine winning sector
       let winningIndex = 0;
       const rewardText = data.reward || "";
       
-      // Find matching prize index
       for (let i = 0; i < PRIZES.length; i++) {
         if (PRIZES[i].text === rewardText) {
           winningIndex = i;
@@ -197,6 +190,9 @@ function Promotions() {
 
       setTimeout(() => {
         showNotification(data.message);
+        if (data.balance) {
+          setBalance(data.balance);
+        }
       }, 5000);
     } catch (err: any) {
       showNotification(err.message || "Already spun today", true);

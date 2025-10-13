@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
@@ -19,9 +18,9 @@ import ProtectedRoute from './services/ProtectedRoute';
 import Contact from './pages/Contact/Contact';
 import Promotions from './pages/Promotions/Promotions';
 import Favourites from './pages/Favourites/Favourites';
+import Forgot from './pages/Login/Forgot';
 
 function App() {
-  const [balance, setBalance] = useState(1000);
 
 return (
       <div className="app-container">
@@ -36,7 +35,7 @@ return (
               <Route path="/games" element={<Games />} />
               <Route path="/profile" element={
                 <ProtectedRoute>
-                  <Profile balance={balance} setBalance={setBalance} />
+                  <Profile/>
                 </ProtectedRoute>}/>
               <Route path="/games/slot" element={<ProtectedRoute><SlotMachine/></ProtectedRoute>} />
               <Route path="/games/blackjack" element={<ProtectedRoute><BlackjackGame /></ProtectedRoute>} />
@@ -50,6 +49,7 @@ return (
               <Route path="/contact" element={<Contact/>}/>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot" element={<Forgot />} />
             </Routes>
           </main>
         </div>

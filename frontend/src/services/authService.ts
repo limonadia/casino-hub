@@ -17,6 +17,15 @@ export class AuthService extends ApiService {
         return response;
       }
 
+      async forgotPassword(email: string) {
+        return await this.post("/forgot-password", { email });
+      }
+      
+      async resetPassword(token: string, newPassword: string) {
+        return await this.post("/reset-password", { token, newPassword });
+      }
+      
+
 }
 
 export const authService = new AuthService();

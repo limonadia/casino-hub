@@ -5,9 +5,14 @@ import (
 	"casino-hub/backend/models"
 	"context"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"net/smtp"
+	"os"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -362,4 +367,181 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
     }
 
     GetProfile(w, r)
+}
+
+
+// ForgotPassword godoc
+// @Summary Request password reset
+// @Description Sends a reset link to user's email (or logs it to console if no mail service).
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body object true "Email"
+// @Success 200 {object} map[string]string "message"
+// @Failure 400 {string} string "Invalid request"
+// @Failure 404 {string} string "User not found"
+// @Router /api/v1/forgot-password [post]
+func ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Email string `json:"email"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Email == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// check if user exists
+	var userID int
+	err := database.DB.QueryRow("SELECT id FROM users WHERE email = ?", body.Email).Scan(&userID)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// generate reset token (for simplicity we use timestamp + userID + random hash)
+	resetToken := generateRandomToken(32)
+	expiry := time.Now().Add(15 * time.Minute)
+
+	_, err = database.DB.Exec("UPDATE users SET reset_token=?, reset_token_expiry=? WHERE id=?", resetToken, expiry, userID)
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+
+	resetLink := "https://your-frontend-url/reset-password?token=" + resetToken
+	log.Println("Password reset link:", resetLink)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Password reset link sent. Please check your email.",
+	})
+}
+
+// ResetPassword godoc
+// @Summary Reset user password
+// @Description Resets the user's password using a valid token.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body object true "Token and new password"
+// @Success 200 {object} map[string]string "message"
+// @Failure 400 {string} string "Invalid request"
+// @Failure 404 {string} string "Invalid or expired token"
+// @Router /api/v1/reset-password [post]
+func ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Token       string `json:"token"`
+		NewPassword string `json:"newPassword"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Token == "" || body.NewPassword == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	var userID int
+	var expiry time.Time
+	err := database.DB.QueryRow("SELECT id, reset_token_expiry FROM users WHERE reset_token=?", body.Token).Scan(&userID, &expiry)
+	if err != nil {
+		http.Error(w, "Invalid token", http.StatusNotFound)
+		return
+	}
+
+	if time.Now().After(expiry) {
+		http.Error(w, "Token expired", http.StatusBadRequest)
+		return
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(body.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		return
+	}
+
+	_, err = database.DB.Exec("UPDATE users SET password=?, reset_token=NULL, reset_token_expiry=NULL WHERE id=?", string(hashed), userID)
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Password reset successful.",
+	})
+}
+
+func generateRandomToken(length int) string {
+	bytes := make([]byte, length)
+	if _, err := rand.Read(bytes); err != nil {
+		log.Println("Error generating random token:", err)
+		return ""
+	}
+	return hex.EncodeToString(bytes)
+}
+
+type ForgotPasswordRequest struct {
+	Email string `json:"email"`
+}
+
+func ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	var req ForgotPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// Check if user exists
+	var userID int
+	err := database.DB.QueryRow("SELECT id FROM users WHERE email = ?", req.Email).Scan(&userID)
+	if err != nil {
+		http.Error(w, "Email not found", http.StatusNotFound)
+		return
+	}
+
+	// Generate secure reset token
+	tokenBytes := make([]byte, 32)
+	if _, err := rand.Read(tokenBytes); err != nil {
+		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		return
+	}
+	resetToken := hex.EncodeToString(tokenBytes)
+
+	// Optionally save token + expiration time in DB (for validation later)
+	_, err = database.DB.Exec(
+		"UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?",
+		resetToken, time.Now().Add(1*time.Hour), userID,
+	)
+	
+	if err != nil {
+		http.Error(w, "Failed to store reset token", http.StatusInternalServerError)
+		return
+	}
+
+	// Build reset link
+	resetLink := "https://your-frontend-url/reset-password?token=" + resetToken
+	fmt.Println("Password reset link:", resetLink)
+
+	// Send email (same style as your ContactHandler)
+	from := os.Getenv("SMTP_EMAIL")
+	password := os.Getenv("SMTP_PASS")
+	to := req.Email
+	subject := "Password Reset Request"
+	body := fmt.Sprintf("You requested to reset your password.\n\nClick the link below:\n%s\n\nThis link will expire in 1 hour.", resetLink)
+
+	message := []byte("Subject: " + subject + "\r\n" +
+		"From: " + from + "\r\n" +
+		"To: " + to + "\r\n\r\n" +
+		body)
+
+	smtpHost := "smtp.gmail.com"
+	smtpPort := "587"
+	auth := smtp.PlainAuth("", from, password, smtpHost)
+
+	if err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, message); err != nil {
+		fmt.Println("Email error:", err)
+		http.Error(w, "Failed to send email", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Password reset link sent successfully"})
 }
