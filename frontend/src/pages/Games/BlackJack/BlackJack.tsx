@@ -274,28 +274,27 @@ const BlackjackGame = () => {
           </div>
         </div>
 
-        {/* Rules */}
-        <div className="max-w-2xl mx-auto mt-8 bg-black/30 rounded-xl p-6 border border-yellow-500/30">
-          <h3 className="text-xl font-bold text-yellow-400 mb-3 text-center">GAME RULES</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
-            <div>
-              <div className="font-semibold text-white">Objective:</div>
-              <div>Get cards totaling 21 or closest without going over</div>
-            </div>
-            <div>
-              <div className="font-semibold text-white">Card Values:</div>
-              <div>A=1/11, K/Q/J=10, Others=Face Value</div>
-            </div>
-            <div>
-              <div className="font-semibold text-white">Blackjack:</div>
-              <div>21 with first 2 cards pays 2.5:1</div>
-            </div>
-            <div>
-              <div className="font-semibold text-white">Dealer:</div>
-              <div>Must hit on 16, stand on 17</div>
-            </div>
-          </div>
+       {/* 🎮 Blackjack Rules (Simplified & Styled) */}
+        <div className="max-w-3xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-yellow-500/40 p-6 text-white text-center">
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">How to Play Blackjack</h2>
+          <ul className="space-y-2 text-sm leading-relaxed text-gray-200 text-left md:text-center">
+            <li>• The goal is to get a hand closer to <span className="text-yellow-400 font-semibold">21</span> than the dealer — without going over.</li>
+            <li>• You start with 2 cards. The dealer also gets 2 cards (1 hidden).</li>
+            <li>• Number cards count as their value, face cards (J, Q, K) are worth <span className="text-green-400 font-semibold">10</span>.</li>
+            <li>• An Ace counts as <span className="text-green-400 font-semibold">1</span> or <span className="text-green-400 font-semibold">11</span> — whichever helps you most.</li>
+            <li>• On your turn, choose:
+              <ul className="ml-4 mt-1">
+                <li>- <span className="text-green-400 font-semibold">HIT</span> → take another card</li>
+                <li>- <span className="text-red-400 font-semibold">STAND</span> → keep your total and end your turn</li>
+              </ul>
+            </li>
+            <li>• If your total exceeds 21, you <span className="text-red-400 font-semibold">bust</span> and lose the round.</li>
+            <li>• When you stand, the dealer reveals their cards and must draw until they reach at least 17.</li>
+            <li>• Whoever is closer to 21 without busting wins the hand.</li>
+            <li>• A natural “Blackjack” (Ace + 10-value card on your first 2 cards) pays <span className="text-green-400 font-semibold">1.5×</span> your bet.</li>
+          </ul>
         </div>
+
       </div>
     </div>
   );

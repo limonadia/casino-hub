@@ -400,24 +400,27 @@ const PremiumBaccarat = () => {
           </div>
         </div>
 
-        {/* Rules */}
-        <div className="max-w-4xl mx-auto mt-8 bg-black/40 rounded-2xl p-6 border border-gold-500/30">
-          <h3 className="text-2xl font-bold text-gold-400 mb-4 text-center">GAME RULES</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="text-white">
-              <div className="font-semibold text-blue-400 mb-2">PLAYER BET</div>
-              <div className="text-sm">Pays 1:1 • House Edge 1.24%</div>
-            </div>
-            <div className="text-white">
-              <div className="font-semibold text-pink-400 mb-2">BANKER BET</div>
-              <div className="text-sm">Pays 1:1 minus 5% • House Edge 1.06%</div>
-            </div>
-            <div className="text-white">
-              <div className="font-semibold text-green-400 mb-2">TIE BET</div>
-              <div className="text-sm">Pays 8:1 • House Edge 14.4%</div>
-            </div>
-          </div>
+        {/* 🎴 Baccarat Rules (Simplified & Styled) */}
+        <div className="max-w-4xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-gold-500/40 p-6 text-white text-center">
+          <h2 className="text-2xl font-bold text-gold-400 mb-4">How to Play Baccarat</h2>
+          <ul className="space-y-2 text-sm leading-relaxed text-gray-200 text-left md:text-center">
+            <li>• The goal is to bet on the hand (Player or Banker) whose total is closest to <span className="text-yellow-400 font-semibold">9</span>.</li>
+            <li>• Two hands are dealt: one for the <span className="text-blue-400 font-semibold">Player</span> and one for the <span className="text-pink-400 font-semibold">Banker</span>.</li>
+            <li>• Cards 2–9 are worth their face value. 10s and face cards (J, Q, K) are worth <span className="text-red-400 font-semibold">0</span>. Aces are worth <span className="text-green-400 font-semibold">1</span>.</li>
+            <li>• Only the last digit of the total counts — for example, 14 becomes <span className="text-yellow-400 font-semibold">4</span>.</li>
+            <li>• The hand closest to 9 wins. If both hands have the same value, it’s a <span className="text-green-400 font-semibold">Tie</span>.</li>
+            <li>• You can bet on:
+              <ul className="ml-4 mt-1">
+                <li>- <span className="text-blue-400 font-semibold">Player</span> → Pays 1:1</li>
+                <li>- <span className="text-pink-400 font-semibold">Banker</span> → Pays 1:1 (minus 5% commission)</li>
+                <li>- <span className="text-green-400 font-semibold">Tie</span> → Pays 8:1</li>
+              </ul>
+            </li>
+            <li>• Sometimes, a third card is drawn automatically according to fixed rules — you don’t make that decision manually.</li>
+            <li>• The simplest strategy: bet on the <span className="text-pink-400 font-semibold">Banker</span>. It statistically wins slightly more often than the Player.</li>
+          </ul>
         </div>
+
       </div>
 
       

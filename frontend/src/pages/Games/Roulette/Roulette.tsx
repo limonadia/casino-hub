@@ -369,6 +369,22 @@ function animateToWinning(winningIndex: number) {
           </div>
         </div>
       </div>
+      <div className="mt-10 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-pink-500/40 p-6 text-white text-center max-w-3xl mx-auto">
+        <h2 className="text-2xl font-bold text-pink-400 mb-4">Game Rules (Simplified)</h2>
+        <ul className="space-y-2 text-sm leading-relaxed text-gray-200">
+          <li>• Choose a bet type: number, color, even/odd, or dozen.</li>
+          <li>• Set your stake amount using the +100 / -100 buttons.</li>
+          <li>• Press <span className="text-yellow-400 font-semibold">Spin</span> to play — the wheel will spin and stop on a number.</li>
+          <li>• If your bet matches the winning outcome, you win based on the payout multiplier:</li>
+          <li className="ml-4 text-gray-300">
+            - Single number: <span className="text-green-400 font-semibold">x35</span><br/>
+            - Color / Even-Odd: <span className="text-green-400 font-semibold">x2</span><br/>
+            - Dozen: <span className="text-green-400 font-semibold">x3</span>
+          </li>
+          <li>• If you lose, your stake is subtracted from your balance.</li>
+          <li>• The goal is to manage your balance wisely and enjoy the game!</li>
+        </ul>
+      </div>
     </div>
   );
 }
