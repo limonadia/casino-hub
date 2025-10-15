@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../../services/authContext';
 import { baccaratService, BetType } from '../../../services/baccaratService';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface Card {
   suit: '♠' | '♥' | '♦' | '♣';
@@ -15,6 +16,8 @@ interface Bet {
   amount: number;
 }
 
+const { t } = useTranslation();
+ 
 const CardComponent = ({ card, isRevealed, delay = 0 }: { 
   card?: Card; 
   isRevealed: boolean; 
@@ -151,7 +154,7 @@ const PremiumBaccarat = () => {
   const [bankerCards, setBankerCards] = useState<Card[]>([]);
   const [bet, setBet] = useState<Bet | null>(null);
   const [selectedChip, setSelectedChip] = useState(10);
-  const [message, setMessage] = useState('Place your bet to begin');
+  const [message, setMessage] = useState(t('Place your bet to begin'));
   const [coins, setCoins] = useState(5000);
   const [isDealing, setIsDealing] = useState(false);
   const [gameHistory, setGameHistory] = useState<BetType[]>([]);
@@ -165,25 +168,20 @@ const PremiumBaccarat = () => {
     
     setBet({ type: betType, amount: selectedChip });
     setCoins(prev => prev - selectedChip);
-    setMessage(`Bet placed: ${selectedChip} on ${betType}`);
+    setMessage(t("Bet placed: {{selectedChip}} on {{betType}}", {selectedChip, betType}));
   };
 
   const deal = async () => {
     if (!bet || isDealing || !token) return;
   
     setIsDealing(true);
-    setMessage("Dealing cards...");
+    setMessage(t("Dealing cards..."));
     setPlayerCards([]);
     setBankerCards([]);
     setShowWin(false);
   
     try {
-      console.log("bet.type", bet.type);
-      console.log("bet.amount", bet.amount);
-      console.log("token", token);
-
       const result: any = await baccaratService.playRound(bet.type , bet.amount, token);
-      console.log("result", result)
   
       setPlayerCards(result.playerCards);
       setBankerCards(result.bankerCards);
@@ -199,13 +197,13 @@ const PremiumBaccarat = () => {
   
     } catch (err) {
       console.error("Baccarat API failed:", err);
-      setMessage("Something went wrong. Try again.");
+      setMessage(t("Something went wrong. Try again."));
     } finally {
       setIsDealing(false);
       setRoundNumber(prev => prev + 1);
       setTimeout(() => {
         setBet(null);
-        setMessage("Place your bet for the next round");
+        setMessage(t("Place your bet for the next round"));
       }, 4000);
     }
   };
@@ -214,7 +212,7 @@ const PremiumBaccarat = () => {
     if (bet && !isDealing) {
       setCoins(prev => prev + bet.amount);
       setBet(null);
-      setMessage('Bet cleared');
+      setMessage(t("Bet cleared"));
     }
   };
 
@@ -232,7 +230,7 @@ const PremiumBaccarat = () => {
         <div className="fixed top-1/4 left-1/2 transform -translate-x-1/2 z-50 text-center">
           <div className="bg-black/80 rounded-3xl p-8 border-4 border-gold-400 animate-pulse">
             <div className="text-6xl font-bold text-gold-400 mb-4 animate-bounce">
-              💰 WINNER! 💰
+              💰 {t("WINNER!")} 💰
             </div>
             <div className="text-4xl text-green-400 font-bold">
               +${winAmount}
@@ -262,7 +260,7 @@ const PremiumBaccarat = () => {
         {gameHistory.length > 0 && (
           <div className="flex justify-center mb-8">
             <div className="bg-black/40 rounded-2xl p-4 border border-gold-500/30">
-              <div className="text-white font-semibold mb-3 text-center">RECENT RESULTS</div>
+              <div className="text-white font-semibold mb-3 text-center">{t("RECENT RESULTS")}</div>
               <div className="flex gap-2">
                 {gameHistory.map((result, index) => (
                   <div
@@ -289,7 +287,7 @@ const PremiumBaccarat = () => {
           <div className="flex items-center gap-8 bg-black/40 rounded-2xl p-6 border-2 border-gold-500/30">
             <div className="text-center">
               <div className="text-3xl font-bold text-gold-400 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
-              <div className="text-sm text-gray-300">COINS</div>
+              <div className="text-sm text-gray-300">{t("COINS")}</div>
             </div>
           </div>
         </div>
@@ -297,12 +295,12 @@ const PremiumBaccarat = () => {
           <div className="flex justify-center gap-16 mb-8">
             <ScoreDisplay 
               cards={playerCards} 
-              title="PLAYER" 
+              title={t("PLAYER") }
               color="text-blue-400"
             />
             <ScoreDisplay 
               cards={bankerCards} 
-              title="BANKER" 
+              title={t("BANKER")}
               color="text-pink-400"
             />
           </div>
@@ -322,19 +320,19 @@ const PremiumBaccarat = () => {
               type={BetType.Player}
               bet={bet} 
               onBet={placeBet} 
-              payout="Pays 1:1"
+              payout={t("Pays 1:1")}
             />
             <BettingArea 
               type={BetType.Banker} 
               bet={bet} 
               onBet={placeBet} 
-              payout="Pays 1:1 (-5%)"
+              payout={t("Pays 1:1 (-5%)")}
             />
             <BettingArea 
               type={BetType.Tie}
               bet={bet} 
               onBet={placeBet} 
-              payout="Pays 8:1"
+              payout={t("Pays 8:1")}
             />
           </div>
           
@@ -346,7 +344,7 @@ const PremiumBaccarat = () => {
 
             {/* Action Buttons */}
             <div className="flex-1 bg-black/40 rounded-2xl p-6 border border-gold-500/30">
-              <div className="text-white font-bold mb-4 text-center text-xl">ACTIONS</div>
+              <div className="text-white font-bold mb-4 text-center text-xl">{t("ACTIONS")}</div>
               <div className="space-y-4">
                 <button
                   onClick={deal}
@@ -356,10 +354,10 @@ const PremiumBaccarat = () => {
                   {isDealing ? (
                     <span className="flex items-center justify-center gap-2">
                       <span className="animate-spin">🎴</span>
-                      DEALING...
+                      {t("DEALING...")}
                     </span>
                   ) : (
-                    'DEAL CARDS'
+                    t("DEAL CARDS")
                   )}
                 </button>
 
@@ -368,16 +366,16 @@ const PremiumBaccarat = () => {
                   disabled={!bet || isDealing}
                   className="w-full px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white font-bold rounded-xl border border-red-400 hover:from-red-500 hover:to-red-700 disabled:opacity-50 transition-all duration-300"
                 >
-                  CLEAR BET
+                  {t("CLEAR BET")}
                 </button>
               </div>
 
               {/* Bet Summary */}
               {bet && (
                 <div className="mt-6 pt-4 border-t border-gray-600">
-                  <div className="text-white font-semibold mb-2">CURRENT BET:</div>
+                  <div className="text-white font-semibold mb-2">{t("CURRENT BET:")}</div>
                   <div className="text-gold-400 font-bold flex-items-center">
-                  <span className="material-symbols-outlined">poker_chip</span>{bet.amount} on {bet.type}
+                  <span className="material-symbols-outlined">poker_chip</span>{bet.amount} {t("on")} {bet.type}
                   </div>
                 </div>
               )}
@@ -385,7 +383,7 @@ const PremiumBaccarat = () => {
             
             {/* Chips */}
             <div className="flex-1 bg-black/40 rounded-2xl p-6 border border-gold-500/30">
-              <div className="text-white font-bold mb-4 text-center text-xl">SELECT CHIP</div>
+              <div className="text-white font-bold mb-4 text-center text-xl">{t("SELECT CHIP")}</div>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {[10, 25, 50, 100, 250, 500].map(value => (
                   <ChipComponent
@@ -402,22 +400,21 @@ const PremiumBaccarat = () => {
 
         {/* 🎴 Baccarat Rules (Simplified & Styled) */}
         <div className="max-w-4xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-gold-500/40 p-6 text-white text-center">
-          <h2 className="text-2xl font-bold text-gold-400 mb-4">How to Play Baccarat</h2>
+          <h2 className="text-2xl font-bold text-gold-400 mb-4">{t("How to Play Baccarat")}</h2>
           <ul className="space-y-2 text-sm leading-relaxed text-gray-200 text-left md:text-center">
-            <li>• The goal is to bet on the hand (Player or Banker) whose total is closest to <span className="text-yellow-400 font-semibold">9</span>.</li>
-            <li>• Two hands are dealt: one for the <span className="text-blue-400 font-semibold">Player</span> and one for the <span className="text-pink-400 font-semibold">Banker</span>.</li>
-            <li>• Cards 2–9 are worth their face value. 10s and face cards (J, Q, K) are worth <span className="text-red-400 font-semibold">0</span>. Aces are worth <span className="text-green-400 font-semibold">1</span>.</li>
-            <li>• Only the last digit of the total counts — for example, 14 becomes <span className="text-yellow-400 font-semibold">4</span>.</li>
-            <li>• The hand closest to 9 wins. If both hands have the same value, it’s a <span className="text-green-400 font-semibold">Tie</span>.</li>
-            <li>• You can bet on:
+            <li>•{t("The goal is to bet on the hand (Player or Banker) whose total is closest to")} <span className="text-yellow-400 font-semibold">9</span>.</li>
+            <li>• {t("Two hands are dealt: one for the")} <span className="text-blue-400 font-semibold">{t("Player")}</span> {t("and one for the")} <span className="text-pink-400 font-semibold">{t("Banker")}</span>.</li>
+            <li>• {t("Cards 2–9 are worth their face value. 10s and face cards (J, Q, K) are worth")} <span className="text-red-400 font-semibold">0</span>. {t("Aces are worth")} <span className="text-green-400 font-semibold">1</span>.</li>
+            <li>• {t("Only the last digit of the total counts — for example, 14 becomes")} <span className="text-yellow-400 font-semibold">4</span>.</li>
+            <li>• {t("The hand closest to 9 wins. If both hands have the same value, it’s a")} <span className="text-green-400 font-semibold">{t("Tie")}</span>.</li>
+            <li>• {t("You can bet on:")}
               <ul className="ml-4 mt-1">
-                <li>- <span className="text-blue-400 font-semibold">Player</span> → Pays 1:1</li>
-                <li>- <span className="text-pink-400 font-semibold">Banker</span> → Pays 1:1 (minus 5% commission)</li>
-                <li>- <span className="text-green-400 font-semibold">Tie</span> → Pays 8:1</li>
+                <li>- <span className="text-blue-400 font-semibold">{t("Player")}</span> → {t("Pays 1:1")}</li>
+                <li>- <span className="text-pink-400 font-semibold">{t("Banker")}</span> → {t("Pays 1:1 (minus 5% commission)")}</li>
+                <li>- <span className="text-green-400 font-semibold">{t("Tie")}</span> → {t("Pays 8:1")}</li>
               </ul>
             </li>
-            <li>• Sometimes, a third card is drawn automatically according to fixed rules — you don’t make that decision manually.</li>
-            <li>• The simplest strategy: bet on the <span className="text-pink-400 font-semibold">Banker</span>. It statistically wins slightly more often than the Player.</li>
+            <li>•{t(" Sometimes, a third card is drawn automatically according to fixed rules — you don’t make that decision manually.")}</li>
           </ul>
         </div>
 

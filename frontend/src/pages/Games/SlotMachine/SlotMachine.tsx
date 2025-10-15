@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { slotService } from '../../../services/slotService';
 import { userService } from '../../../services/userService';
 import { useAuth } from '../../../services/authContext';
+import { useTranslation } from 'react-i18next';
 
 const SlotMachine = () => {
   const [reels, setReels] = useState(['🍒', '🍒', '🍒']);
@@ -13,6 +14,7 @@ const SlotMachine = () => {
   const [showWin, setShowWin] = useState(false);
   const [reelStops, setReelStops] = useState([false, false, false]);
   const { setBalance } = useAuth();
+  const { t } = useTranslation();
 
   const playSound = (type: string) => {
     console.log(`Playing ${type} sound`);
@@ -173,27 +175,27 @@ const SlotMachine = () => {
 
           <div className="grid grid-cols-2 gap-4 mb-6 text-center">
             <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-4 border-2 border-green-400">
-              <div className="text-green-200 text-sm font-semibold">COINS</div>
+              <div className="text-green-200 text-sm font-semibold">{t("COINS")}</div>
               <div className="text-2xl font-bold text-white flex items-center"><span className="material-symbols-outlined">poker_chip</span>{coins.toLocaleString()}</div>
             </div>
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 border-2 border-blue-400">
-              <div className="text-blue-200 text-sm font-semibold">BET</div>
+              <div className="text-blue-200 text-sm font-semibold">{t("BET")}</div>
               <div className="text-2xl font-bold text-white flex items-center justify-center"><span className="material-symbols-outlined">poker_chip</span>{bet}</div>
             </div>
           </div>
 
           <div className="flex gap-4 justify-center mb-4">
           <button onClick={minBet}  disabled={spinning} className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-700 text-white font-bold rounded-lg border-2 border-purple-400  disabled:opacity-50 shadow-lg">
-              MIN BET
+              {t("MIN BET")}
             </button>
             <button onClick={() => setBet(Math.max(10, bet - 10))} disabled={spinning} className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-bold rounded-lg border-2 border-red-400 hover:from-red-400 hover:to-red-600 disabled:opacity-50 shadow-lg">
-              BET -
+              {t("BET")} -
             </button>
             <button onClick={() => setBet(Math.min(500, coins, bet + 10))} disabled={spinning} className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-lg border-2 border-blue-400 hover:from-blue-400 hover:to-blue-600 disabled:opacity-50 transition-all shadow-lg">
-              BET +
+              {t("BET")} +
             </button>
             <button onClick={maxBet} disabled={spinning} className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-lg border-2 border-purple-400 hover:from-purple-400 hover:to-purple-600 disabled:opacity-50 transition-all shadow-lg">
-              MAX BET
+              {t("MAX BET")}
             </button>
           </div>
 
@@ -234,7 +236,7 @@ const SlotMachine = () => {
           </div>
 
           {showWin && (<div className="text-3xl text-green-400 font-bold mt-2 flex items-center">
-            +<span className="material-symbols-outlined">poker_chip</span>{winAmount.toLocaleString()} COINS!
+            +<span className="material-symbols-outlined">poker_chip</span>{winAmount.toLocaleString()} {t("COINS")}!
           </div>)}
 
           {coins < bet && (
@@ -243,7 +245,7 @@ const SlotMachine = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mt-4 text-red-400 font-bold"
             >
-              ⚠️ Insufficient coins!
+              ⚠️ {t("Insufficient coins!")}
             </motion.div>
           )}
         </div>

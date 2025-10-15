@@ -16,10 +16,10 @@ function Home() {
         <div className="text-center page lg:mx-10 h-full">
             <Gallery />
             <div className="flex flex-col md:flex-row w-full justify-between items-center gap-7 md:gap-4 pt-15 pb-8">
-                <RedirectCard imgSrc={slot3} description="Explore our growing range of top-tier games designed to thrill and keep you entertained around the clock." buttonText="Go to Casino" link="/games"/>
-                <RedirectCard imgSrc={slot2} description="Spin the reels, chase jackpots, and experience nonstop excitement with every play." buttonText="Play Now" link="/games/slot"/>
+                <RedirectCard imgSrc={slot3} description={t("Explore our growing range of top-tier games designed to thrill and keep you entertained around the clock.")} buttonText={t("Go to Casino")} link="/games"/>
+                <RedirectCard imgSrc={slot2} description={t("Spin the reels, chase jackpots, and experience nonstop excitement with every play.")} buttonText={t("Play Now")} link="/games/slot"/>
             </div>
-            { token ? ("") : (<BannerCard imgSrc={casino} description="Signup now and grab 5000 free Coins!" buttonText={t("Signup")} link="/signup"/>)}
+            { token ? ("") : (<BannerCard imgSrc={casino} description={t("Signup now and grab 5000 free Coins!")} buttonText={t("Signup")} link="/signup"/>)}
         </div></>
     );
     }

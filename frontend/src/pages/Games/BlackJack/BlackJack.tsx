@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import type { BlackjackState, Card } from '../../../models/blackjackModel';
 import { blackJackService } from '../../../services/blackJackService';
 import { useAuth } from '../../../services/authContext';
+import { useTranslation } from 'react-i18next';
 
 const PlayingCard = ({ card, hidden = false, isDealt = false }: { 
   card: Card; 
@@ -54,10 +55,11 @@ const PlayingCard = ({ card, hidden = false, isDealt = false }: {
 const BlackjackGame = () => {
   const [playerCards, setPlayerCards] = useState<Card[]>([]);
   const [dealerCards, setDealerCards] = useState<Card[]>([]);
+  const { t } = useTranslation();
   const [deck, setDeck] = useState<Card[]>([]);
   const [playerTurn, setPlayerTurn] = useState(false);
   const [gameOver, setGameOver] = useState(true);
-  const [message, setMessage] = useState('Place your bet to start!');
+  const [message, setMessage] = useState(t('Place your bet to start!'));
   const [bet, setBet] = useState(50);
   const [winAmount, setWinAmount] = useState(0);
   const [isDealing, setIsDealing] = useState(false);
@@ -100,7 +102,7 @@ const BlackjackGame = () => {
     setIsDealing(true);
     setGameOver(false);
     setPlayerTurn(true);
-    setMessage('Dealing cards...');
+    setMessage(t('Dealing cards...'));
   
     try {
       const state = await blackJackService.startGame(bet, balance);
@@ -168,7 +170,7 @@ const BlackjackGame = () => {
             {/* Dealer Section */}
             <div className="text-center mb-8">
               <div className="text-xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-                <span>🎩 DEALER</span>
+                <span>🎩 {t("DEALER")}</span>
                 <span className="text-lg">
                   {gameOver ? `(${dealerScore})` : (dealerCards.length > 0 ? dealerCards[0].value + dealerCards[0].suit : '(?)')}
                 </span>
@@ -193,13 +195,13 @@ const BlackjackGame = () => {
             {/* Player Section */}
             <div className="text-center">
               <div className="text-xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-                <span>👤 PLAYER</span>
+                <span>👤 {t("PLAYER")}</span>
                 <span className="text-lg">({playerScore})</span>
                 {playerScore === 21 && playerCards.length === 2 && (
                   <span className="text-yellow-400 animate-pulse">BLACKJACK!</span>
                 )}
                 {playerScore > 21 && ( 
-                  <span className="text-red-400 animate-pulse">BUST!</span>
+                  <span className="text-red-400 animate-pulse">{t("BUST")}!</span>
                 )}
               </div>
               <div className="flex justify-center items-center min-h-32 mb-6">
@@ -214,14 +216,14 @@ const BlackjackGame = () => {
                 <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-400 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
-                    <div className="text-sm text-gray-300">COINS</div>
+                    <div className="text-sm text-gray-300">{t("COINS")}</div>
                   </div>
                 </div>
               </div>
               <div className='w-full pl-4'>
                 <div className="flex flex-wrap justify-center items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-semibold">BET:</span>
+                    <span className="text-white font-semibold">{t("BET")}:</span>
                     <button onClick={() => setBet(Math.max(25, bet - 25))} disabled={!gameOver} className="w-full sm:w-auto px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500 disabled:opacity-50 font-bold">
                       -25
                     </button>
@@ -242,17 +244,17 @@ const BlackjackGame = () => {
                         whileHover={{ scale: balance >= bet ? 1.05 : 1 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                        {isDealing ? 'DEALING...' : 'DEAL'}
+                        {isDealing ? t('DEALING...') : t('DEAL')}
                       </motion.button>
                     )}
                     
                     {playerTurn && !gameOver && (
                       <>
                         <button onClick={hit} className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-green-600 to-green-800 text-white font-bold rounded-lg border border-green-400 hover:from-green-500 hover:to-green-700 transition-all">
-                          HIT
+                          {t("HIT")}
                         </button>
                         <button onClick={stand} className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white font-bold rounded-lg border border-red-400 hover:from-red-500 hover:to-red-700 transition-all">
-                          STAND
+                          {t("STAND")}
                         </button>
                       </>
                     )}
@@ -261,7 +263,7 @@ const BlackjackGame = () => {
               
                 {gameOver && (
                   <div className="flex  gap-2 mt-4 justify-center">
-                    <span className="text-gray-300 text-sm mr-2">Quick Bet:</span>
+                    <span className="text-gray-300 text-sm mr-2">{t("Quick Bet:")}</span>
                     {[25, 50, 100, 250].map(amount => (
                       <button key={amount} onClick={() => setBet(amount)} disabled={balance < amount} className="w-full sm:w-auto px-3 py-1 bg-gray-700 text-white rounded text-sm hover:bg-gray-600 disabled:opacity-50">
                         {amount}
@@ -276,22 +278,22 @@ const BlackjackGame = () => {
 
        {/* 🎮 Blackjack Rules (Simplified & Styled) */}
         <div className="max-w-3xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-yellow-500/40 p-6 text-white text-center">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-4">How to Play Blackjack</h2>
+          <h2 className="text-2xl font-bold text-yellow-400 mb-4">{t("How to Play Blackjack")}</h2>
           <ul className="space-y-2 text-sm leading-relaxed text-gray-200 text-left md:text-center">
-            <li>• The goal is to get a hand closer to <span className="text-yellow-400 font-semibold">21</span> than the dealer — without going over.</li>
-            <li>• You start with 2 cards. The dealer also gets 2 cards (1 hidden).</li>
-            <li>• Number cards count as their value, face cards (J, Q, K) are worth <span className="text-green-400 font-semibold">10</span>.</li>
-            <li>• An Ace counts as <span className="text-green-400 font-semibold">1</span> or <span className="text-green-400 font-semibold">11</span> — whichever helps you most.</li>
-            <li>• On your turn, choose:
+            <li>• {t("The goal is to get a hand closer to")} <span className="text-yellow-400 font-semibold">21</span> {t("than the dealer — without going over.")}</li>
+            <li>• {t("You start with 2 cards. The dealer also gets 2 cards (1 hidden).")}</li>
+            <li>• {t("Number cards count as their value, face cards (J, Q, K) are worth")} <span className="text-green-400 font-semibold">10</span>.</li>
+            <li>• {t("An Ace counts as")} <span className="text-green-400 font-semibold">1</span> {t("or")} <span className="text-green-400 font-semibold">11</span> — {t("whichever helps you most.")}</li>
+            <li>• {t("On your turn, choose:")}
               <ul className="ml-4 mt-1">
-                <li>- <span className="text-green-400 font-semibold">HIT</span> → take another card</li>
-                <li>- <span className="text-red-400 font-semibold">STAND</span> → keep your total and end your turn</li>
+                <li>- <span className="text-green-400 font-semibold">{t("HIT")}</span> → {t("take another card")}</li>
+                <li>- <span className="text-red-400 font-semibold">{t("STAND")}</span> → {t("keep your total and end your turn")}</li>
               </ul>
             </li>
-            <li>• If your total exceeds 21, you <span className="text-red-400 font-semibold">bust</span> and lose the round.</li>
-            <li>• When you stand, the dealer reveals their cards and must draw until they reach at least 17.</li>
-            <li>• Whoever is closer to 21 without busting wins the hand.</li>
-            <li>• A natural “Blackjack” (Ace + 10-value card on your first 2 cards) pays <span className="text-green-400 font-semibold">1.5×</span> your bet.</li>
+            <li>• {t("If your total exceeds 21, you")} <span className="text-red-400 font-semibold">{t("bust")}</span> {t("and lose the round.")}</li>
+            <li>• {t("When you stand, the dealer reveals their cards and must draw until they reach at least 17.")}</li>
+            <li>• {t("Whoever is closer to 21 without busting wins the hand.")}</li>
+            <li>• {t("A natural “Blackjack” (Ace + 10-value card on your first 2 cards) pays")} <span className="text-green-400 font-semibold">1.5×</span> {t("your bet.")}</li>
           </ul>
         </div>
 

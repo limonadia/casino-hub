@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Sidebar, sidebarClasses, Menu, menuClasses, MenuItem } from "react-pro-sidebar";
 import { Link, useLocation } from "react-router-dom";
 import './SidebarComponent.css';
+import { useTranslation } from "react-i18next";
 
 function SideBarComponent() {
   const [isToggled, setIsToggled] = useState(false);
   const handleToggle = () => {
     setIsToggled(prev => !prev);
   };
+  const { t } = useTranslation();
 
   const location = useLocation(); 
   const isActive = (path: string) => location.pathname === path;
@@ -39,33 +41,33 @@ function SideBarComponent() {
           </button>
         </MenuItem>
         <MenuItem component={<Link to="/" />} className={isActive("/") ? "active-item-link" : ""}>
-          <span className="material-symbols-outlined text-casinoPink px-7">home</span> Home
+          <span className="material-symbols-outlined text-casinoPink px-7">home</span> {t("Home")}
         </MenuItem>
         <MenuItem component={<Link to="/games" />} className={isActive("/games") ? "active-item-link" : ""}>
-          <span className="material-symbols-outlined text-casinoPink px-7">casino</span> Games
+          <span className="material-symbols-outlined text-casinoPink px-7">casino</span> {t("Games")}
         </MenuItem>
         {isLoggedIn && (
           <>
             <MenuItem component={<Link to="/favourites" />} className={isActive("/favourites") ? "active-item-link" : ""}>
-              <span className="material-symbols-outlined text-casinoPink px-7">bookmark_heart</span> Favourites
+              <span className="material-symbols-outlined text-casinoPink px-7">bookmark_heart</span> {t("Favourites")}
             </MenuItem>
             <MenuItem component={<Link to="/promotions" />} className={isActive("/promotions") ? "active-item-link" : ""}>
-              <span className="material-symbols-outlined text-casinoPink px-7">featured_seasonal_and_gifts</span> Promotions
+              <span className="material-symbols-outlined text-casinoPink px-7">featured_seasonal_and_gifts</span> {t("Promotions")}
             </MenuItem>
             <MenuItem component={<Link to="/profile" />} className={isActive("/profile") ? "active-item-link" : ""}>
-              <span className="material-symbols-outlined text-casinoPink px-7">person</span> Profile
+              <span className="material-symbols-outlined text-casinoPink px-7">person</span> {t("Profile")}
             </MenuItem>
           </>
         )}
         <MenuItem component={<Link to="/contact" />} className={isActive("/contact") ? "active-item-link" : ""}>
-          <span className="material-symbols-outlined text-casinoPink px-7">support_agent</span> Contact Us
+          <span className="material-symbols-outlined text-casinoPink px-7">support_agent</span> {t("Contact Us")}
         </MenuItem>
         <MenuItem className={isActive("/signout") || isActive("/login") ? "active-item-link" : ""} onClick={() => {
           if (isLoggedIn) {  localStorage.removeItem("token");  window.location.href = "/"; }}}
           component={!isLoggedIn ? <Link to="/login" /> : undefined}>
           <span className="material-symbols-outlined text-casinoPink px-7">
             {isLoggedIn ? "logout" : "login"}
-          </span>{" "}{isLoggedIn ? "Sign Out" : "Login"}
+          </span>{" "}{isLoggedIn ? t("Sign Out") : t("Login")}
         </MenuItem>
       </Menu>
     </Sidebar>

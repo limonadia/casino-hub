@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { userService } from "../../services/userService";
 import { useAuth } from "../../services/authContext";
 import type { User } from "../../models/user"; 
+import { useTranslation } from "react-i18next";
 
 function Promotions() {
   const { user, setBalance, setUser } = useAuth();
@@ -13,11 +14,12 @@ function Promotions() {
   const [notification, setNotification] = useState({ show: false, message: '', isError: false });
   const [ballRotation, setBallRotation] = useState(0);
   const [ballPosition, setBallPosition] = useState({ x: 87, y: 12 });
+  const { t } = useTranslation();
   
   const [canClaimCash, setCanClaimCash] = useState(false);
   const [canSpinWheel, setCanSpinWheel] = useState(false);
-  const [cashCountdownText, setCashCountdownText] = useState('Loading...');
-  const [wheelCountdownText, setWheelCountdownText] = useState('Loading...');
+  const [cashCountdownText, setCashCountdownText] = useState(t("Loading..."));
+  const [wheelCountdownText, setWheelCountdownText] = useState(t("Loading..."));
   
   const wheelRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLDivElement>(null);
@@ -40,7 +42,7 @@ function Promotions() {
   ];
   
   const formatTimeRemaining = (ms: number): string => {
-    if (ms <= 0) return 'Ready to use!';
+    if (ms <= 0) return t("Ready to use!");
     const totalSeconds = Math.floor(ms / 1000);
     const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -62,10 +64,10 @@ function Promotions() {
 
     if (cashTimeRemaining <= 0) {
         setCanClaimCash(true);
-        setCashCountdownText('Ready to claim!');
+        setCashCountdownText(t("Ready to claim!"));
     } else {
         setCanClaimCash(false);
-        setCashCountdownText(`Next claim in: ${formatTimeRemaining(cashTimeRemaining)}`);
+        setCashCountdownText(t("Next claim in")+`: ${formatTimeRemaining(cashTimeRemaining)}`);
     }
 
     const lastWheelTimeStr = user.lastWheelSpin;
@@ -79,18 +81,18 @@ function Promotions() {
     
     if (wheelTimeRemaining <= 0) {
         setCanSpinWheel(true);
-        setWheelCountdownText('Ready to spin!');
+        setWheelCountdownText(t("Ready to spin!"));
     } else {
         setCanSpinWheel(false);
-        setWheelCountdownText(`Next spin in: ${formatTimeRemaining(wheelTimeRemaining)}`);
+        setWheelCountdownText(t("Next spin in")+`: ${formatTimeRemaining(wheelTimeRemaining)}`);
     }
 
   }, [user, TWENTY_FOUR_HOURS]);
 
   useEffect(() => {
     if (!user) {
-        setCashCountdownText('Loading user data...');
-        setWheelCountdownText('Loading user data...');
+        setCashCountdownText(t("Loading user data..."));
+        setWheelCountdownText(t("Loading user data..."));
         return;
     }
 
@@ -118,9 +120,9 @@ function Promotions() {
       }));
       
       checkCooldowns();
-      showNotification("100 chips added to your balance!");
+      showNotification(t("100 chips added to your balance!"));
     } catch (err: any) {
-      showNotification(err.message || "Already claimed today", true);
+      showNotification(err.message || t("Already claimed today"), true);
     }
   }
 
@@ -195,7 +197,7 @@ function Promotions() {
         }
       }, 5000);
     } catch (err: any) {
-      showNotification(err.message || "Already spun today", true);
+      showNotification(err.message || t("Already spun today"), true);
       setIsSpinning(false);
     }
   };
@@ -203,7 +205,7 @@ function Promotions() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl">{t("Loading...")}</div>
       </div>
     );
   }
@@ -212,15 +214,15 @@ function Promotions() {
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800 p-5">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-white text-center mb-10 drop-shadow-lg">
-          Daily Promotions
+          {t("Daily Promotions")}
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
           {/* Daily Cash Bonus */}
           <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl hover:transform hover:-translate-y-2 transition-all duration-300">
-            <h2 className="text-2xl font-bold text-yellow-400 text-center mb-4">Daily Cash Bonus</h2>
+            <h2 className="text-2xl font-bold text-yellow-400 text-center mb-4">{t("Daily Cash Bonus")}</h2>
             <p className="text-white/90 text-center mb-6">
-              Collect your free daily cash bonus! Come back every 24 hours for more rewards.
+              {t("Collect your free daily cash bonus! Come back every 24 hours for more rewards.")}
             </p>
             <button
               onClick={claimDailyCash}
@@ -233,9 +235,9 @@ function Promotions() {
             >
               {canClaimCash ? (
                 <span className="flex items-center justify-center gap-1">
-                  Claim <span className="material-symbols-outlined">poker_chip</span>100
+                  {t("Claim")} <span className="material-symbols-outlined">poker_chip</span>100
                 </span>
-              ) : 'Already Claimed'}
+              ) : t('Already Claimed')}
             </button>
             <div className="text-center mt-4 text-yellow-400 text-sm font-mono">
               {cashCountdownText}
@@ -244,9 +246,9 @@ function Promotions() {
 
           {/* Spin the Wheel */}
           <div className="bg-white/10 backdrop-blur-md rounded-3xl md:p-8 border border-white/20 shadow-2xl hover:transform hover:-translate-y-2 transition-all duration-300">
-            <h2 className="text-2xl font-bold text-yellow-400 text-center mb-4">Lucky Wheel</h2>
+            <h2 className="text-2xl font-bold text-yellow-400 text-center mb-4">{t("Lucky Wheel")}</h2>
             <p className="text-white/90 text-center mb-6">
-              Spin the wheel once every 24 hours for amazing prizes!
+              {t("Spin the wheel once every 24 hours for amazing prizes!")}
             </p>
             
             <div className="w-80 h-80 rounded-full shadow-2xl overflow-hidden relative mb-6 mx-auto">
@@ -324,7 +326,7 @@ function Promotions() {
                   : 'bg-gray-700/80 text-gray-400 cursor-not-allowed opacity-80 shadow-inner'
               }`}
             >
-              {isSpinning ? 'Spinning...' : canSpinWheel ? 'Spin the Wheel!' : 'Already Spun Today'}
+              {isSpinning ? "Spinning..." : canSpinWheel ? t("Spin the Wheel!") : t("Already Spun Today")}
             </button>
             <div className="text-center mt-4 text-yellow-400 text-sm font-mono">
               {wheelCountdownText}

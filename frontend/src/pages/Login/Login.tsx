@@ -8,6 +8,7 @@ import { validationErrorService } from "../../validation/validationErrorService"
 import { IconButton, InputAdornment } from "@mui/material";
 import { useNotifications } from "../../services/notificationContext";
 import { useAuth } from "../../services/authContext";
+import { useTranslation } from "react-i18next";
 
  function Login() {
     const { error } = useNotifications();
@@ -17,6 +18,7 @@ import { useAuth } from "../../services/authContext";
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault(); 
     };
+    const { t } = useTranslation();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -52,8 +54,8 @@ import { useAuth } from "../../services/authContext";
 
     const login = async () => {
         const newErrors: { [key: string]: string } = {};
-        const emailError = validationService.requiredValidator(email, "Email");
-        const passwordError = validationService.requiredValidator(password, "Password");
+        const emailError = validationService.requiredValidator(email, t("Email"));
+        const passwordError = validationService.requiredValidator(password, t("Password"));
         if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
         if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
 
@@ -69,14 +71,14 @@ import { useAuth } from "../../services/authContext";
             setToken(String(response));
             navigate("/");
         } catch (err: any) {
-            const message = err.message || "Login failed";
+            const message = err.message || t("Login failed");
 
             if (message.includes("401") || message.includes("Invalid credentials")) {
-                error("Incorrect password." );
+                error(t("Incorrect password."));
             } else if (message.includes("404") || message.includes("not found")) {
-                error("Email does not exist");
+                error(t("Email does not exist"));
             } else {
-                error("Something went wrong. Please try again later.")
+                error(t("Something went wrong. Please try again later."))
             }
         }
       };
@@ -85,12 +87,12 @@ import { useAuth } from "../../services/authContext";
         <div className="text-center page lg:mx-10 h-full">
             <div className="flex justify-center items-start h-screen">
                 <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
-                    <h2 className="text-2xl font-bold mb-4 text-center text-black">Login Form</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-center text-black">{t("Login Form")}</h2>
                     
                     <div className="py-5 h-44 flex items-center flex-col justify-between w-80">
                         <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth variant="outlined"
                             error={!!errors.email} helperText={errors.email} onKeyDown={handleEmailKeyDown}/>
-                        <TextField label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} fullWidth variant="outlined"
+                        <TextField label={t("Password")} type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} fullWidth variant="outlined"
                             error={!!errors.password} helperText={errors.password} onKeyDown={handlePasswordKeyDown} inputRef={passwordRef}
                             InputProps={{
                                 endAdornment: (
@@ -108,10 +110,10 @@ import { useAuth } from "../../services/authContext";
                             }}/>
                     </div>
 
-                    <ButtonComponent buttonText="Login" onClick={login} disabled={!formIsValid}/>
+                    <ButtonComponent buttonText={t("Login")} onClick={login} disabled={!formIsValid}/>
 
-                    <p className="text-black pt-3">Not a member? <Link to="/signup" className="text-casinoPink !text-casinoPink"> Signup now</Link></p> 
-                    <p className="text-xs underline pt-3"><Link to="/forgot" className="text-casinoPink !text-casinoPink"> Forgot password</Link></p> 
+                    <p className="text-black pt-3">{t("Not a member?")} <Link to="/signup" className="text-casinoPink !text-casinoPink"> {t("Signup now")}</Link></p> 
+                    <p className="text-xs underline pt-3"><Link to="/forgot" className="text-casinoPink !text-casinoPink"> {t("Forgot password")}</Link></p> 
 
                 </div>
             </div>

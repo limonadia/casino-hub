@@ -3,6 +3,7 @@ import { Zap, Crown, Sparkles } from 'lucide-react';
 import { useAuth } from '../../../services/authContext';
 import { kenoService } from '../../../services/kenoService';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const totalNumbers = 80;
 
@@ -34,9 +35,10 @@ const Keno = () => {
       justDrawn: false
     }))
   );
+  const { t } = useTranslation();
   const [drawnNumbers, setDrawnNumbers] = useState<number[]>([]);
   const [bet, setBet] = useState(100);
-  const [message, setMessage] = useState('Select 1-10 numbers and place your bet!');
+  const [message, setMessage] = useState(t('Select 1-10 numbers and place your bet!'));
   const [animatingNumber] = useState<number | null>(null);
   const [totalPayout, setTotalPayout] = useState(0);
   const { balance, setBalance } = useAuth();
@@ -66,7 +68,6 @@ const Keno = () => {
   
     const selectedNumbers = numbers.filter(n => n.selected).map(n => n.value);
     const res: any = await kenoService.play(selectedNumbers, bet);
-    console.log("response", res);
   
     setDrawnNumbers(res.drawnNumbers);
   
@@ -131,7 +132,7 @@ const Keno = () => {
             <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-yellow-500/30">
               <div className="text-center">
                 <div className="text-2xl font-bold text-pink-500 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
-                <div className="text-sm text-grey-300">COINS</div>
+                <div className="text-sm text-grey-300">{t("COINS")}</div>
               </div>
             </div>
           </div>
@@ -171,7 +172,7 @@ const Keno = () => {
               {/* Game Controls */}
               <div className="flex flex-wrap gap-4 items-center justify-center">
                 <div className="flex items-center space-x-2">
-                  <label className="text-sm font-medium">Bet:</label>
+                  <label className="text-sm font-medium">{t("Bet")}:</label>
                   <select
                     value={bet}
                     onChange={(e) => setBet(Number(e.target.value))}
@@ -188,14 +189,14 @@ const Keno = () => {
                   className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded font-semibold text-sm transition-colors"
                 >
                   <Zap className="w-4 h-4 inline mr-1" />
-                  Quick Pick
+                  {t("Quick Pick")}
                 </button>
 
                 <button
                   onClick={clearAll}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded font-semibold text-sm transition-colors"
                 >
-                  Clear All
+                  {t("Clear All")}
                 </button>
 
                   <button
@@ -203,7 +204,7 @@ const Keno = () => {
                     disabled={selectedCount === 0}
                     className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg font-bold text-lg shadow-lg transition-all transform hover:scale-105"
                   >
-                    DRAW ({selectedCount} numbers)
+                    {t("DRAW")} ({selectedCount} {t("numbers")})
                   </button>
               </div>
             </div>
@@ -224,7 +225,7 @@ const Keno = () => {
               <p className="text-center text-lg font-semibold">{message}</p>
               {drawnNumbers.length > 0 && (
                 <div className="mt-2">
-                  <p className="text-sm text-gray-300 mb-2">Drawn Numbers:</p>
+                  <p className="text-sm text-gray-300 mb-2">{("Drawn Numbers")}:</p>
                   <div className="flex flex-wrap gap-1">
                     {drawnNumbers.map(num => (
                       <span key={num} className="px-2 py-1 bg-red-600 rounded text-sm font-mono">
@@ -241,7 +242,7 @@ const Keno = () => {
           <div className="space-y-4">
             {/* Payout Table */}
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30">
-              <h3 className="font-bold mb-3 text-center">Payout Table</h3>
+              <h3 className="font-bold mb-3 text-center">{t("Payout Table")}</h3>
               <div className="space-y-1 text-xs">
                 {selectedCount > 0 && payoutTable[selectedCount] && payoutTable[selectedCount].map((multiplier: any, hits: any) => (
                   <div key={hits} className={`flex justify-between ${hits === hitCount ? 'bg-yellow-600/30 px-2 py-1 rounded' : ''}`}>
@@ -254,18 +255,18 @@ const Keno = () => {
 
             {/* Statistics */}
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30">
-              <h3 className="font-bold mb-3 text-center">Game Info</h3>
+              <h3 className="font-bold mb-3 text-center">{t("Game Info")}</h3>
               <div className="text-xs space-y-2">
                 <div className="flex justify-between">
-                  <span>Numbers Selected:</span>
+                  <span>{t("Numbers Selected")}:</span>
                   <span>{selectedCount}/10</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Current Bet:</span>
+                  <span>{t("Current Bet")}:</span>
                   <span className='flex items-center'><span className="material-symbols-outlined">poker_chip</span> {bet}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Max Payout:</span>
+                  <span>{t("Max Payout")}:</span>
                   <span className='flex items-center'><span className="material-symbols-outlined">poker_chip</span> {selectedCount > 0 && payoutTable[selectedCount] ? (Math.max(...payoutTable[selectedCount]) * bet).toLocaleString() : 0}</span>
                 </div>
               </div>

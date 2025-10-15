@@ -3,6 +3,7 @@ import { TrendingUp, TrendingDown, RefreshCw, Equal } from 'lucide-react';
 import { hiloService } from '../../../services/hiLoService';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../../services/authContext';
+import { useTranslation } from 'react-i18next';
 
 interface Card {
   value: number; 
@@ -44,10 +45,11 @@ const getCardName = (value: number): string => {
 };
 
 const CasinoHighLow = () => {
+  const { t } = useTranslation();
   const [currentCard, setCurrentCard] = useState<Card>(getRandomCard());
   const [nextCard, setNextCard] = useState<Card | null>(null);
   const [bet, setBet] = useState(100);
-  const [message, setMessage] = useState('Place your bet and guess if the next card will be higher or lower!');
+  const [message, setMessage] = useState(t('Place your bet and guess if the next card will be higher or lower!'));
   const [gameState, setGameState] = useState<'betting' | 'revealing' | 'complete'>('betting');
   const [soundEnabled] = useState(true);
   const [gameHistory, setGameHistory] = useState<GameHistory[]>([]);
@@ -92,7 +94,7 @@ const CasinoHighLow = () => {
       setCurrentCard(getRandomCard());
     }
     setGameState('betting');
-    setMessage('Place your bet and guess if the next card will be higher, lower, or tie!');
+    setMessage(t('Place your bet and guess if the next card will be higher, lower, or tie!'));
   };
 
   const resetGame = () => {
@@ -101,7 +103,7 @@ const CasinoHighLow = () => {
     setNextCard(null);
     setGameState('betting');
     setGameHistory([]);
-    setMessage('Place your bet and guess if the next card will be higher, lower, or tie!');
+    setMessage(t('Place your bet and guess if the next card will be higher, lower, or tie!'));
   };
 
   const renderCard = (card: Card | null, isAnimating = false, isNext = false) => {
@@ -167,7 +169,7 @@ const CasinoHighLow = () => {
               <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-pink-500/30">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-pink-500 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
-                  <div className="text-sm text-grey-300">COINS</div>
+                  <div className="text-sm text-grey-300">{t("COINS")}</div>
                 </div>
               </div>
             </div>
@@ -179,10 +181,10 @@ const CasinoHighLow = () => {
           <div className="lg:col-span-1 space-y-4">
             {/* Betting Controls */}
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-pink-500/30">
-              <h3 className="font-bold mb-4 text-center text-pink-400">Betting Controls</h3>
+              <h3 className="font-bold mb-4 text-center text-pink-400">{t("Betting Controls")}</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Bet Amount</label>
+                  <label className="block text-sm font-medium mb-2">{t("Bet Amount")}</label>
                   <input
                     type="number"
                     value={bet}
@@ -208,7 +210,7 @@ const CasinoHighLow = () => {
 
             {/* Game History */}
             <div className="bg-black/40 backdrop-blur-sm rounded-xl p-4 border border-pink-500/30">
-              <h3 className="font-bold mb-3 text-center text-pink-400">Recent Games</h3>
+              <h3 className="font-bold mb-3 text-center text-pink-400">{t("Recent Games")}</h3>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {gameHistory.map((game, index) => (
                   <div key={index} className="text-xs bg-gray-800/50 p-2 rounded">
@@ -239,14 +241,14 @@ const CasinoHighLow = () => {
               {/* Cards Display */}
               <div className="flex justify-center items-center space-x-8 mb-8">
                 <div className="text-center">
-                  <h3 className="text-lg font-bold mb-4 text-pink-400">Current Card</h3>
+                  <h3 className="text-lg font-bold mb-4 text-pink-400">{t("Current Card")}</h3>
                   {renderCard(currentCard)}
                 </div>
                 
                 <div className="text-6xl text-pink-400 animate-pulse">VS</div>
                 
                 <div className="text-center">
-                  <h3 className="text-lg font-bold mb-4 text-pink-400">Next Card</h3>
+                  <h3 className="text-lg font-bold mb-4 text-pink-400">{t("Next Card")}</h3>
                   {gameState === 'revealing' ? (
                     renderCard(null, true)
                   ) : nextCard ? (
@@ -269,7 +271,7 @@ const CasinoHighLow = () => {
                       className="px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg font-bold text-xl shadow-lg transition-all transform hover:scale-105 flex items-center"
                     >
                       <TrendingUp className="w-6 h-6 mr-2" />
-                      HIGHER
+                      {t("HIGHER")}
                     </button>
                     <button
                       onClick={() => makeGuess('lower')}
@@ -277,7 +279,7 @@ const CasinoHighLow = () => {
                       className="px-8 py-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg font-bold text-xl shadow-lg transition-all transform hover:scale-105 flex items-center"
                     >
                       <TrendingDown className="w-6 h-6 mr-2" />
-                      LOWER
+                      {t("LOWER")}
                     </button>
                     <button
                       onClick={() => makeGuess('tie')}
@@ -285,7 +287,7 @@ const CasinoHighLow = () => {
                       className="px-8 py-4 bg-gradient-to-r from-orange-600 to-blue-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg font-bold text-xl shadow-lg transition-all transform hover:scale-105 flex items-center"
                     >
                       <Equal className="w-6 h-6 mr-2" />
-                      TIE
+                      {t("TIE")}
                     </button>
                   </>
                 ) : gameState === 'complete' ? (
@@ -294,12 +296,12 @@ const CasinoHighLow = () => {
                     className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 rounded-lg font-bold text-xl shadow-lg transition-all transform hover:scale-105 flex items-center"
                   >
                     <RefreshCw className="w-6 h-6 mr-2" />
-                    NEXT ROUND
+                    {t("NEXT ROUND")}
                   </button>
                 ) : (
                   <div className="text-center">
                     <div className="text-lg font-semibold text-yellow-400 animate-pulse">
-                      Dealing card...
+                     {(" Dealing card...")}
                     </div>
                   </div>
                 )}
@@ -308,11 +310,11 @@ const CasinoHighLow = () => {
               {/* Additional Controls */}
               <div className="flex justify-center space-x-4">
                 <button onClick={resetGame} className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold transition-colors">
-                  Reset Game
+                  {t("Reset Game")}
                 </button>
                 {balance === 0 && (
                   <button onClick={() => setBalance(10000)} className="px-4 py-2 bg-yellow-700 hover:bg-yellow-600 rounded font-semibold transition-colors">
-                    Add Credits
+                    {t("Add Credits")}
                   </button>)}
               </div>
             </div>

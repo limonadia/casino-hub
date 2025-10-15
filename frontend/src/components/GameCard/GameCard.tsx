@@ -74,7 +74,7 @@ function GameCard({ title, imgSrc, path, showFavorites = true }: { title: string
     background: 'var(--color-backgroound-darker)',
     borderRadius: '15px',
     overflow: 'hidden',
-    position: 'relative',   // 👈 this fixes it
+    position: 'relative',  
   }}
 >
   {!isLoading && user && showFavorites && (
@@ -87,7 +87,7 @@ function GameCard({ title, imgSrc, path, showFavorites = true }: { title: string
         backgroundColor: 'rgba(0,0,0,0.4)',
         '&:hover': { backgroundColor: 'rgba(0,0,0,0.6)' },
         color: isFavourite ? '#db2777' : 'white',
-        zIndex: 2,   // 👈 ensures it’s above the image
+        zIndex: 2,  
       }}
     >
       {isFavourite ? <FavoriteIcon /> : <FavoriteBorderIcon />}

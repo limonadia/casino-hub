@@ -6,6 +6,7 @@ import { authService } from "../../services/authService";
 import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { useNotifications } from "../../services/notificationContext";
+import { useTranslation } from "react-i18next";
 
 function ResetPassword() {
   const { success, error } = useNotifications();
@@ -17,6 +18,7 @@ function ResetPassword() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const t = searchParams.get("token");
@@ -32,13 +34,13 @@ function ResetPassword() {
     const newErrors: { [key: string]: string } = {};
 
     // Validation
-    const passwordError = validationService.requiredValidator(password, "Password");
-    const confirmError = validationService.requiredValidator(confirmPassword, "Confirm Password");
+    const passwordError = validationService.requiredValidator(password, t("Password"));
+    const confirmError = validationService.requiredValidator(confirmPassword, t("Confirm Password"));
 
     if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
     if (confirmError) newErrors.confirmPassword = validationErrorService.getErrorMessage(confirmError);
     if (!newErrors.confirmPassword && password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t("Passwords do not match");
     }
 
     setErrors(newErrors);
@@ -50,10 +52,10 @@ function ResetPassword() {
       setIsLoading(true);
       // Call your resetPassword API
       await authService.resetPassword(token, password);
-      success("Password reset successfully! You can now log in.");
+      success(t("Password reset successfully! You can now log in."));
       navigate("/login");
     } catch (err: any) {
-      const message = err.message || "Unable to reset password. Try again later.";
+      const message = err.message || t("Unable to reset password. Try again later.");
       error(message);
     } finally {
       setIsLoading(false);
@@ -67,12 +69,12 @@ function ResetPassword() {
       <div className="flex justify-center items-start h-screen">
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-2xl font-bold mb-4 text-center text-black">
-            Reset Password
+            {t("Reset Password")}
           </h2>
 
           <div className="py-5 flex flex-col gap-4 w-80">
             <TextField
-              label="New Password"
+              label={t("New Password")}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -82,7 +84,7 @@ function ResetPassword() {
               helperText={errors.password}
             />
             <TextField
-              label="Confirm Password"
+              label={t("Confirm Password")}
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -94,15 +96,15 @@ function ResetPassword() {
           </div>
 
           <ButtonComponent
-            buttonText={isLoading ? "Resetting..." : "Reset Password"}
+            buttonText={isLoading ? t("Resetting...") : t("Reset Password")}
             onClick={handleResetPassword}
             disabled={!formIsValid || isLoading}
           />
 
           <p className="text-black pt-3 text-sm">
-            Remember your password?{" "}
+            {t("Remember your password?")}{" "}
             <Link to="/login" className="text-casinoPink !text-casinoPink">
-              Back to Login
+              {t("Back to Login")}
             </Link>
           </p>
         </div>

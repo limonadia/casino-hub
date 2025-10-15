@@ -6,11 +6,13 @@ import GameCard from '../../components/GameCard/GameCard';
 import { gamesData, type RecentGame } from '../../models/gamesData';
 import './Favourites.css';
 import { userService } from '../../services/userService';
+import { useTranslation } from 'react-i18next';
 
 function Favourites() {
   const { user } = useAuth();
   const [favouriteGames, setFavourites] = useState<any[]>([]);
   const [games, setGames] = useState<RecentGame[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     userService.getRecentGames()
@@ -29,7 +31,7 @@ function Favourites() {
 
   return (
     <div className="page w-full">
-      <p className="header">Favourites</p>
+      <p className="header">{t("Favourites")}</p>
       {favouriteGames.length > 0 ? (
         <Swiper spaceBetween={20} slidesPerView={3} className="mySwiper">
           {favouriteGames.map((game, index) => (
@@ -39,10 +41,10 @@ function Favourites() {
           ))}
         </Swiper>
       ) : (
-        <div className="empty-state">No favourite games yet</div>
+        <div className="empty-state">{t("No favourite games yet")}</div>
       )}
 
-      <p className="header">Recent</p>
+      <p className="header">{t("Recent")}</p>
       {games.length > 0 ? (
         <Swiper spaceBetween={20} slidesPerView={5} className="mySwiper">
           {games.map((game, index) => (
@@ -57,7 +59,7 @@ function Favourites() {
           ))}
         </Swiper>
       ) : (
-        <div className="empty-state">No recent games played</div>
+        <div className="empty-state">{t("No recent games played")}</div>
       )}
     </div>
   );

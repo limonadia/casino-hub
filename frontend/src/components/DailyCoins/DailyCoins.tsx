@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
 import type { User } from "../../models/user";
+import { useTranslation } from "react-i18next";
 
 function DailyCoins({ user }: { user: User }) {
   const [nextClaim, setNextClaim] = useState<string>("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user.lastFreeCoins) {
       const last = new Date(user.lastFreeCoins).getTime();
-      const next = last + 24 * 60 * 60 * 1000; // +24h
+      const next = last + 24 * 60 * 60 * 1000;
       const diff = next - Date.now();
 
       if (diff > 0) {
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        setNextClaim(`Next free coins in ${hours}h ${mins}m`);
+        setNextClaim(t("Next free coins in {{hours}}h {{mins}}m", { hours, mins }));
       } else {
-        setNextClaim("✅ Free coins available now!");
+        setNextClaim(t("Free coins available now!"));
       }
     } else {
-      setNextClaim("✅ Free coins available now!");
+      setNextClaim(t("Free coins available now!"));
     }
   }, [user.lastFreeCoins]);
 

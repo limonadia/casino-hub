@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../../services/authContext';
 import { BetEnum, rouletteService, type BetType } from '../../../services/rouletteService';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const POCKETS = [
   { n: 0, color: 'green' },
@@ -53,6 +54,7 @@ export default function RouletteWheel() {
   const [selectedBet, setSelectedBet] = useState<BetType | null>(null);
   const [stake, setStake] = useState(100);
   const [message, setMessage] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const sectors = useMemo(() => POCKETS, []);
 
@@ -171,15 +173,15 @@ function animateToWinning(winningIndex: number) {
   const spin = async () => {
     if (isSpinning) return;
     if (!selectedBet) {
-      setMessage('Select a bet first');
+      setMessage(t('Select a bet first'));
       return;
     }
     if (stake <= 0) {
-      setMessage('Invalid stake');
+      setMessage(t('Invalid stake'));
       return;
     }
     if (stake > balance) {
-      setMessage('Insufficient balance');
+      setMessage(t('Insufficient balance'));
       return;
     }
 
@@ -199,7 +201,7 @@ function animateToWinning(winningIndex: number) {
     
     const winningIndex = POCKETS.findIndex(p => p.n === winningNumber);
     if (winningIndex < 0) {
-      setMessage('Invalid winning number from server');
+      setMessage(t('Invalid winning number from server'));
       return;
     }
 
@@ -218,7 +220,7 @@ function animateToWinning(winningIndex: number) {
         payout = res.payout;
       }
 
-    setMessage(won ? `You won ${payout}! Number ${winningNumber}` : `You lost. Number ${winningNumber}`);
+    setMessage(won ? t("You won {{payout}}! Number {{winningNumber}}", {payout, winningNumber}) : t("You lost. Number {{winningNumber}}", {winningNumber}));
     setBalance(serverResult.newBalance);
     }, animationWait + 20);
   };
@@ -335,16 +337,16 @@ function animateToWinning(winningIndex: number) {
           <div className="bg-slate-800 rounded-lg p-4 mb-4">
             <div className="grid grid-cols-3 gap-2">
               <button onClick={() => setSelectedBet({ kind: 'color', value: 'red' })} style={getButtonStyle('color', 'red')}>
-                Red
+                {t("Red")}
               </button>
               <button onClick={() => setSelectedBet({ kind: 'color', value: 'black' })} style={getButtonStyle('color', 'black')}>
-                Black
+                {t("Black")}
               </button>
               <button onClick={() => setSelectedBet({ kind: 'parity', value: 'even' })} style={getButtonStyle('parity', 'even')}>
-                Even
+                {t("Even")}
               </button>
               <button onClick={() => setSelectedBet({ kind: 'parity', value: 'odd' })} style={getButtonStyle('parity', 'odd')}>
-                Odd
+                {t("Odd")}
               </button>
               <button onClick={() => setSelectedBet({ kind: 'dozen', value: 1 })} style={getButtonStyle('dozen', 1)}>
                 1-12
@@ -370,19 +372,18 @@ function animateToWinning(winningIndex: number) {
         </div>
       </div>
       <div className="mt-10 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-lg border border-pink-500/40 p-6 text-white text-center max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-pink-400 mb-4">Game Rules (Simplified)</h2>
+        <h2 className="text-2xl font-bold text-pink-400 mb-4">{t("Game Rules")}</h2>
         <ul className="space-y-2 text-sm leading-relaxed text-gray-200">
-          <li>• Choose a bet type: number, color, even/odd, or dozen.</li>
-          <li>• Set your stake amount using the +100 / -100 buttons.</li>
-          <li>• Press <span className="text-yellow-400 font-semibold">Spin</span> to play — the wheel will spin and stop on a number.</li>
-          <li>• If your bet matches the winning outcome, you win based on the payout multiplier:</li>
+          <li>• {t("Choose a bet type: number, color, even/odd, or dozen.")}</li>
+          <li>• {t("Set your stake amount using the +100 / -100 buttons.")}</li>
+          <li>• {t("Press")} <span className="text-yellow-400 font-semibold">{t("Spin")}</span> {t("to play — the wheel will spin and stop on a number.")}</li>
+          <li>• {t("If your bet matches the winning outcome, you win based on the payout multiplier")}:</li>
           <li className="ml-4 text-gray-300">
-            - Single number: <span className="text-green-400 font-semibold">x35</span><br/>
-            - Color / Even-Odd: <span className="text-green-400 font-semibold">x2</span><br/>
-            - Dozen: <span className="text-green-400 font-semibold">x3</span>
+            - {t("Single number")}: <span className="text-green-400 font-semibold">x35</span><br/>
+            - {t("Color / Even-Odd")}: <span className="text-green-400 font-semibold">x2</span><br/>
+            - {t("Dozen")}: <span className="text-green-400 font-semibold">x3</span>
           </li>
-          <li>• If you lose, your stake is subtracted from your balance.</li>
-          <li>• The goal is to manage your balance wisely and enjoy the game!</li>
+          <li>• {t("If you lose, your stake is subtracted from your balance.")}</li>
         </ul>
       </div>
     </div>

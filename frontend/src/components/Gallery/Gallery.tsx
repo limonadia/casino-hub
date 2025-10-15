@@ -9,11 +9,13 @@ import slot2 from "../../assets/slots.png";
 import slot3 from "/games/Slot.png";
 import ButtonComponent from '../Button/Button';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface CarouselProps {
   children?: ReactNode;
 }
 
+const { t } = useTranslation();
 const Carousel: React.FC<CarouselProps> = ({ children }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -83,12 +85,12 @@ function Gallery() {
                       {index === 0 && ( 
                         <div className="absolute top-1/9 left-8 bg-black/70 p-6 rounded-lg text-white max-w-md overlay-box">
                           <h2 className="text-casinoPink text-xl font-bold mb-2">
-                            The Bonus Vault is Open!
+                            {t("The Bonus Vault is Open!")}
                           </h2>
                           <p className="text-sm mb-4">
-                            Step in now and claim your exclusive rewards. Massive bonuses are waiting just for you!
+                            {t("Step in now and claim your exclusive rewards. Massive bonuses are waiting just for you!")}
                           </p>
-                          <ButtonComponent buttonText="Win Free Coins" onClick={toPromotions} />
+                          <ButtonComponent buttonText={t("Win Free Coins")} onClick={toPromotions} />
                         </div>
                       )}
                     </div>

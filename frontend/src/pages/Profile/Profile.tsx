@@ -6,10 +6,12 @@ import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { useNotifications } from "../../services/notificationContext";
 import { useAuth } from "../../services/authContext";
+import { useTranslation } from "react-i18next";
 
 function Profile() {
   const { success, error } = useNotifications();
   const { user, setUser } = useAuth();
+  const { t } = useTranslation();
 
   const usernameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -49,7 +51,7 @@ function Profile() {
   
   const handleUsernameChange = (value: string) => {
     setUsername(value);
-    const errorObj = validationService.requiredValidator(value, "Username");
+    const errorObj = validationService.requiredValidator(value, t("Username"));
     setErrors((prev) => ({
       ...prev,
       username: validationErrorService.getErrorMessage(errorObj),
@@ -76,7 +78,7 @@ function Profile() {
 
   const handleConfirmPasswordChange = (value: string) => {
     setConfirmPassword(value);
-    const errorMsg = password && value !== password ? "Passwords do not match" : "";
+    const errorMsg = password && value !== password ? t("Passwords do not match") : "";
     setErrors((prev) => ({
       ...prev,
       confirmPassword: errorMsg,
@@ -87,7 +89,7 @@ function Profile() {
   const updateProfile = async () => {
     const newErrors: { [key: string]: string } = {};
 
-    const usernameError = validationService.requiredValidator(username, "Username");
+    const usernameError = validationService.requiredValidator(username, t("Username"));
     const emailError = validationService.emailValidator(email);
     const passwordError = password ? validationService.minLengthValidator(password, 8) : null;
     const confirmPasswordError =
@@ -98,7 +100,7 @@ function Profile() {
     if (usernameError) newErrors.username = validationErrorService.getErrorMessage(usernameError);
     if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
     if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
-    if (confirmPasswordError) newErrors.confirmPassword = "Passwords do not match";
+    if (confirmPasswordError) newErrors.confirmPassword = t("Passwords do not match");
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
@@ -111,12 +113,12 @@ function Profile() {
       });
 
       setUser(updatedUser);
-      success("Profile updated successfully!");
+      success(t("Profile updated successfully!"));
       setPassword("");
       setConfirmPassword("");
     } catch (err: any) {
-      error("Update failed. Please try again.");
-      setErrors({ general: err.message || "Update failed" });
+      error(t("Update failed. Please try again."));
+      setErrors({ general: err.message || t("Update failed") });
     }
   };
 
@@ -124,11 +126,11 @@ function Profile() {
     <div className="text-center page lg:mx-10 h-screen w-screen">
       <div className="flex justify-center items-start h-full ">
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md h-4/7 flex flex-col justify-between h-auto">
-          <h2 className="text-2xl font-bold mb-4 text-center text-black">Update Profile</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center text-black">{t("Update Profile")}</h2>
 
           <div className="py-5 flex items-center flex-col justify-between w-11/12 space-y-4 h-full gap-2 w-full">
             <TextField
-              label="Username"
+              label={t("Username")}
               type="text"
               value={username}
               onChange={(e) => handleUsernameChange(e.target.value)}
@@ -152,7 +154,7 @@ function Profile() {
             />
 
             <TextField
-              label="New Password (optional)"
+              label={t("New Password (optional)")}
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => handlePasswordChange(e.target.value)}
@@ -181,7 +183,7 @@ function Profile() {
             />
 
             <TextField
-              label="Confirm New Password"
+              label={t("Confirm New Password")}
               type={showPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => handleConfirmPasswordChange(e.target.value)}
@@ -211,7 +213,7 @@ function Profile() {
           </div>
 
           <ButtonComponent
-            buttonText="Update Profile"
+            buttonText={t("Update Profile")}
             onClick={updateProfile}
             disabled={!formIsValid}
           />

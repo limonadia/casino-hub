@@ -5,6 +5,7 @@ import { userService } from "../../services/userService";
 import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { useNotifications } from "../../services/notificationContext";
+import { useTranslation } from "react-i18next";
 
 function Contact() {
   const { success, error } = useNotifications();
@@ -15,13 +16,14 @@ function Contact() {
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
 
     // Validate required fields
     if (field === "title" || field === "description") {
-      const errorObj = validationService.requiredValidator(value, field === "title" ? "Title" : "Description");
+      const errorObj = validationService.requiredValidator(value, field === "title" ? t("Title") : t("Description"));
       setErrors((prev) => ({
         ...prev,
         [field]: validationErrorService.getErrorMessage(errorObj),
@@ -38,7 +40,7 @@ function Contact() {
     setErrors({});
     try {
       await userService.contact(form);
-      success("Message sent successfully!");
+      success(t("Message sent successfully!"));
       setForm({ title: "", description: "", phone: "" });
     } catch (err: any) {
       console.error("Error sending message:", err);
@@ -52,11 +54,11 @@ function Contact() {
     <div className="text-center page lg:mx-10 h-screen w-screen">
       <div className="flex justify-center items-start h-full">
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md h-3/6 flex flex-col justify-between h-auto">
-          <h2 className="text-2xl font-bold mb-4 text-center text-black">Contact Us</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center text-black">{t("Contact Us")}</h2>
 
           <div className="py-5 flex items-center flex-col justify-between w-11/12 space-y-4 h-full w-full gap-2">
             <TextField
-              label="Title"
+              label={t("Title")}
               value={form.title}
               onChange={(e) => handleChange("title", e.target.value)}
               fullWidth
@@ -67,7 +69,7 @@ function Contact() {
             />
 
             <TextField
-              label="Description"
+              label={t("Description")}
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
               fullWidth
@@ -80,7 +82,7 @@ function Contact() {
             />
 
             <TextField
-              label="Phone (optional)"
+              label={t("Phone (optional)")}
               value={form.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
               fullWidth
@@ -90,7 +92,7 @@ function Contact() {
           </div>
 
           <ButtonComponent
-            buttonText={isSending ? "Sending..." : "Send"}
+            buttonText={isSending ? t("Sending..."): t("Send")}
             onClick={handleSubmit}
             disabled={!formIsValid || isSending}
           />

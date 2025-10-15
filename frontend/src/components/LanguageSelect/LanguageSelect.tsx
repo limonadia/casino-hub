@@ -29,7 +29,7 @@ const SingleValue = (props: any) => (
 function LanguageSelect() {
   const handleChange = (newValue: SingleValue<{ value: string; icon: string }>) => {
     if (newValue) {
-      i18n.changeLanguage(newValue.value); // switch language
+      i18n.changeLanguage(newValue.value);
     }
   };
 

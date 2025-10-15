@@ -6,6 +6,7 @@ import { authService } from "../../services/authService";
 import { validationService } from "../../validation/validationService";
 import { validationErrorService } from "../../validation/validationErrorService";
 import { useNotifications } from "../../services/notificationContext";
+import { useTranslation } from "react-i18next";
 
 function Signup() {
 
@@ -13,6 +14,7 @@ function Signup() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
     const { success, error } = useNotifications();
 
@@ -62,7 +64,7 @@ function Signup() {
       
         const errorMsg =
           value !== password
-            ? "Passwords do not match"
+            ? t("Passwords do not match")
             : "";
       
         setErrors((prev) => ({
@@ -77,13 +79,13 @@ function Signup() {
     
         const newErrors: { [key: string]: string } = {};
 
-        const usernameError = validationService.requiredValidator(username, "Username");
+        const usernameError = validationService.requiredValidator(username, t("Username"));
         const emailError = validationService.emailValidator(email);
         const passwordError = validationService.minLengthValidator(password, 8);
         const confirmPasswordError = confirmPassword !== password ? { key: "passwordMismatch", params: {} }: null;
 
         if (confirmPasswordError)
-          newErrors.confirmPassword = "Passwords do not match";
+          newErrors.confirmPassword = t("Passwords do not match");
 
 
                 if (usernameError) newErrors.username = validationErrorService.getErrorMessage(usernameError);
@@ -99,11 +101,11 @@ function Signup() {
             
                 try {
                     await authService.signup({ username, email, password, balance: 5000 });
-                    success("User created successfully!")
+                    success(t("User created successfully!"))
                     navigate("/login");
                 } catch (err: any) {
-                    error("Signup failed. Please try again.")
-                    setErrors({ general: err.message || "Signup failed" });
+                    error(t("Signup failed. Please try again."))
+                    setErrors({ general: err.message || t("Signup failed") });
                 }
     };
 
@@ -131,16 +133,16 @@ function Signup() {
     <div className="text-center page lg:mx-10 h-full">
         <div className="flex justify-center items-start h-screen">
             <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md">
-                <h2 className="text-2xl font-bold mb-4 text-center text-black">Signup Form</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center text-black">{t("Signup Form")}</h2>
                     
                 <div className="py-5 h-96 flex items-center flex-col justify-between w-80">
-                    <TextField label="Username" type="text" value={username} onChange={(e) => handleUsernameChange(e.target.value)} fullWidth
+                    <TextField label={t("Username")} type="text" value={username} onChange={(e) => handleUsernameChange(e.target.value)} fullWidth
                         variant="outlined"  error={!!errors.username} helperText={errors.username} onKeyDown={handleKeyDown("username")} inputRef={usernameRef}/>
 
                     <TextField label="Email" type="email" value={email} onChange={(e) => handleEmailChange(e.target.value)} fullWidth
                         variant="outlined" error={!!errors.email} helperText={errors.email} inputRef={emailRef}  onKeyDown={handleKeyDown("email")}/>
 
-                    <TextField label="Password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => handlePasswordChange(e.target.value)} fullWidth variant="outlined"
+                    <TextField label={t("Password")} type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => handlePasswordChange(e.target.value)} fullWidth variant="outlined"
                             error={!!errors.password} helperText={errors.password} inputRef={passwordRef} onKeyDown={handleKeyDown("password")}
                             InputProps={{
                                 endAdornment: (
@@ -156,7 +158,7 @@ function Signup() {
                                 </InputAdornment>
                                 ),
                             }}/>
-                    <TextField label="Confirm Password" type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => handleConfirmPasswordChange(e.target.value)} fullWidth
+                    <TextField label={t("Confirm Password")} type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => handleConfirmPasswordChange(e.target.value)} fullWidth
                         variant="outlined"  error={!!errors.confirmPassword} helperText={errors.confirmPassword} inputRef={confirmPasswordRef} onKeyDown={handleKeyDown("confirmPassword")} 
                         InputProps={{
                             endAdornment: (
@@ -180,7 +182,7 @@ function Signup() {
 
                 <ButtonComponent buttonText="Signup" onClick={signup} disabled={!formIsValid} />
                 
-                <p className="text-black pt-3">Already have an account? <Link to="/login" className="text-casinoPink !text-casinoPink"> Login</Link></p> 
+                <p className="text-black pt-3">{t("Already have an account?")}<Link to="/login" className="text-casinoPink !text-casinoPink"> {t("Login")}</Link></p> 
             </div>
         </div>
     </div>

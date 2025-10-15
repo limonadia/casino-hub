@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../services/authContext';
 import { progressiveSlotService } from '../../../services/progressiveSlot.service';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const SYMBOLS = [
   { id: 1, emoji: '🍒', name: 'Cherry', multiplier: 2, rarity: 0.3 },
@@ -54,6 +55,7 @@ const PremiumSlotMachine = () => {
   const [reelResults, setReelResults] = useState<number[]>([0, 0, 0, 0, 0]);
   const [lastWin, setLastWin] = useState(0);
   const [showWinAnimation, setShowWinAnimation] = useState(false);
+  const { t } = useTranslation();
 
   const playSound = (type: string) => {
     console.log(`Playing ${type} sound`);
@@ -118,7 +120,7 @@ const PremiumSlotMachine = () => {
           <div className="flex gap-6 bg-black/30 rounded-xl p-4 border border-pink-500/30">
             <div className="text-center">
               <div className="text-2xl font-bold text-pink-500 flex items-center"><span className="material-symbols-outlined">poker_chip</span>{balance.toLocaleString()}</div>
-              <div className="text-sm text-grey-300">COINS</div>
+              <div className="text-sm text-grey-300">{t("COINS")}</div>
             </div>
           </div>
         </div>
@@ -176,7 +178,7 @@ const PremiumSlotMachine = () => {
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
                 disabled={isSpinning}
               >
-                Max Bet
+                {t("Max Bet")}
               </button>
             </div>
 
@@ -197,18 +199,18 @@ const PremiumSlotMachine = () => {
 
         {/* Paytable */}
         <div className="bg-black/40 backdrop-blur-sm p-8 border border-pink-500/30 rounded-2xl p-6 border-2">
-          <h3 className="text-2xl font-bold text-yellow-400 mb-4 text-center">💰 PAYTABLE 💰</h3>
+          <h3 className="text-2xl font-bold text-yellow-400 mb-4 text-center">💰 {t("PAYTABLE")} 💰</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {SYMBOLS.map(symbol => (
               <div key={symbol.id} className="border-2 border-pink-500/30 rounded-lg p-3 text-center">
                 <div className="text-3xl mb-2">{symbol.emoji}</div>
                 <div className="text-white font-bold">{symbol.name}</div>
-                <div className="text-yellow-400 text-sm">{symbol.multiplier}x bet</div>
+                <div className="text-yellow-400 text-sm">{symbol.multiplier}x {t("bet")}</div>
               </div>
             ))}
           </div>
           <div className="mt-4 text-center text-gray-300 text-sm">
-            Match 3+ symbols on the payline to win! • 5 of a kind = 10x multiplier
+            {t("Match 3+ symbols on the payline to win! • 5 of a kind = 10x multiplier")}
           </div>
         </div>
       </div>
