@@ -15,8 +15,8 @@ interface CarouselProps {
   children?: ReactNode;
 }
 
-const { t } = useTranslation();
 const Carousel: React.FC<CarouselProps> = ({ children }) => {
+
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
@@ -69,6 +69,8 @@ function Gallery() {
     const toPromotions = () =>{
       navigate("/promotions");
     }
+const { t } = useTranslation();
+
 
     return (
         <div className="flex justify-center items-center bg-background-lighter w-full image-div">

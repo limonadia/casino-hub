@@ -89,7 +89,7 @@ function Profile() {
   const updateProfile = async () => {
     const newErrors: { [key: string]: string } = {};
 
-    const usernameError = validationService.requiredValidator(username, t("Username"));
+    const usernameError = validationService.requiredValidator(username, "Username");
     const emailError = validationService.emailValidator(email);
     const passwordError = password ? validationService.minLengthValidator(password, 8) : null;
     const confirmPasswordError =

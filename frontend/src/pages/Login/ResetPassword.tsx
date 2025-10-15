@@ -34,8 +34,8 @@ function ResetPassword() {
     const newErrors: { [key: string]: string } = {};
 
     // Validation
-    const passwordError = validationService.requiredValidator(password, t("Password"));
-    const confirmError = validationService.requiredValidator(confirmPassword, t("Confirm Password"));
+    const passwordError = validationService.requiredValidator(password, "Password");
+    const confirmError = validationService.requiredValidator(confirmPassword, "Confirm Password");
 
     if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
     if (confirmError) newErrors.confirmPassword = validationErrorService.getErrorMessage(confirmError);

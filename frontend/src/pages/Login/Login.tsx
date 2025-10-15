@@ -54,8 +54,8 @@ import { useTranslation } from "react-i18next";
 
     const login = async () => {
         const newErrors: { [key: string]: string } = {};
-        const emailError = validationService.requiredValidator(email, t("Email"));
-        const passwordError = validationService.requiredValidator(password, t("Password"));
+        const emailError = validationService.requiredValidator(email, "Email");
+        const passwordError = validationService.requiredValidator(password, "Password");
         if (emailError) newErrors.email = validationErrorService.getErrorMessage(emailError);
         if (passwordError) newErrors.password = validationErrorService.getErrorMessage(passwordError);
 

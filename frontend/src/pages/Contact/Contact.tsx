@@ -23,7 +23,7 @@ function Contact() {
 
     // Validate required fields
     if (field === "title" || field === "description") {
-      const errorObj = validationService.requiredValidator(value, field === "title" ? t("Title") : t("Description"));
+      const errorObj = validationService.requiredValidator(value, field === "title" ? "Title" : "Description");
       setErrors((prev) => ({
         ...prev,
         [field]: validationErrorService.getErrorMessage(errorObj),

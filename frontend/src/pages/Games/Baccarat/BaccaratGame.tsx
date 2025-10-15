@@ -15,8 +15,6 @@ interface Bet {
   type: BetType;
   amount: number;
 }
-
-const { t } = useTranslation();
  
 const CardComponent = ({ card, isRevealed, delay = 0 }: { 
   card?: Card; 
@@ -154,6 +152,7 @@ const PremiumBaccarat = () => {
   const [bankerCards, setBankerCards] = useState<Card[]>([]);
   const [bet, setBet] = useState<Bet | null>(null);
   const [selectedChip, setSelectedChip] = useState(10);
+  const { t } = useTranslation();
   const [message, setMessage] = useState(t('Place your bet to begin'));
   const [coins, setCoins] = useState(5000);
   const [isDealing, setIsDealing] = useState(false);

@@ -79,7 +79,7 @@ function Signup() {
     
         const newErrors: { [key: string]: string } = {};
 
-        const usernameError = validationService.requiredValidator(username, t("Username"));
+        const usernameError = validationService.requiredValidator(username, "Username");
         const emailError = validationService.emailValidator(email);
         const passwordError = validationService.minLengthValidator(password, 8);
         const confirmPasswordError = confirmPassword !== password ? { key: "passwordMismatch", params: {} }: null;
