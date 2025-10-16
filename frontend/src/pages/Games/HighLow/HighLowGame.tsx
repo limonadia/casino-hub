@@ -51,16 +51,8 @@ const CasinoHighLow = () => {
   const [bet, setBet] = useState(100);
   const [message, setMessage] = useState(t('Place your bet and guess if the next card will be higher or lower!'));
   const [gameState, setGameState] = useState<'betting' | 'revealing' | 'complete'>('betting');
-  const [soundEnabled] = useState(true);
   const [gameHistory, setGameHistory] = useState<GameHistory[]>([]);
   const { balance, setBalance } = useAuth(); 
-
-  const playSound = (type: 'win' | 'lose' | 'click' | 'big_win') => {
-    if (!soundEnabled) return;
-    const audio = new Audio(`data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSMFJHfH8N2QQAoUXrTp66hVFApGn+DyvmkfDShvxu3ajiwELHfK8uiTTAsRXrXs7aVTHwdOr+j3xHkrBzWO3v3EdMx7`);
-    audio.volume = 0.1;
-    audio.play().catch(() => {});
-  };
 
   const makeGuess = async (guess: 'higher' | 'lower' | 'tie') => {
     try {

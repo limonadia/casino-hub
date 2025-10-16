@@ -159,7 +159,6 @@ const PremiumBaccarat = () => {
   const [gameHistory, setGameHistory] = useState<BetType[]>([]);
   const [showWin, setShowWin] = useState(false);
   const [winAmount, setWinAmount] = useState(0);
-  const [roundNumber, setRoundNumber] = useState(1);
   const { token, balance, setBalance } = useAuth(); 
 
   const placeBet = (betType: BetType) => {
@@ -199,7 +198,6 @@ const PremiumBaccarat = () => {
       setMessage(t("Something went wrong. Try again."));
     } finally {
       setIsDealing(false);
-      setRoundNumber(prev => prev + 1);
       setTimeout(() => {
         setBet(null);
         setMessage(t("Place your bet for the next round"));
