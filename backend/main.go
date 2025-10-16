@@ -34,11 +34,17 @@ func main() {
 
 	// CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"https://casino-iy3s39fp7-limonadias-projects.vercel.app", "http://localhost:3000", "http://localhost:5173"},
+		AllowedOrigins: []string{
+			"https://casino-c7a1pr92k-limonadias-projects.vercel.app",
+			"https://casino-hub.vercel.app",
+			"http://localhost:3000",
+			"http://localhost:5173",
+		},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	})
+	
 
 	handler := c.Handler(r)
 

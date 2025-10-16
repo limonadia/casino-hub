@@ -9,12 +9,11 @@ import (
 )
 
 func RegisterRoutes(r *mux.Router) {
-	api := r.PathPrefix("/api/v1").Subrouter()
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "🎰 Casino Hub API is live! Visit /api/v1 for endpoints.")
 	})
-	
+	api := r.PathPrefix("/api/v1").Subrouter()
 
 	//Auth
 	api.HandleFunc("/signup", handlers.Signup).Methods("POST")
