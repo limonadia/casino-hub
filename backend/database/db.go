@@ -3,23 +3,29 @@ package database
 import (
 	"database/sql"
 	"log"
+	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
 func InitDB() {
 	var err error
-	dsn := "casino_user:password123@tcp(127.0.0.1:3306)/casino_hub?parseTime=true"
-	DB, err = sql.Open("mysql", dsn)
+	
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		log.Fatal("❌ DATABASE_URL environment variable is not set")
+	}
+
+	DB, err = sql.Open("postgres", dsn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("❌ Failed to open database:", err)
 	}
 
 	if err = DB.Ping(); err != nil {
 		log.Fatal("❌ Failed to connect to database:", err)
 	}
 
-	log.Println("✅ Connected to MySQL")
+	log.Println("✅ Connected to PostgreSQL (Supabase)")
 }
