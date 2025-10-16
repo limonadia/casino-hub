@@ -8,7 +8,7 @@ export interface ApiServiceOptions {
     protected defaultHeaders: Record<string, string>;
   
     constructor(options?: ApiServiceOptions) {
-      this.baseURL = options?.baseURL || "http://localhost:8080/api/v1";
+      this.baseURL = import.meta.env.VITE_API_URL|| "http://localhost:8080/api/v1";
       this.defaultHeaders = options?.defaultHeaders || {
         "Content-Type": "application/json",
       };
