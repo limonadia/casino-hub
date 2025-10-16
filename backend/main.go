@@ -9,11 +9,8 @@ import (
 	"casino-hub/backend/database"
 	"casino-hub/backend/routes"
 
-	"github.com/joho/godotenv"
-
-	_ "casino-hub/backend/docs"
-
 	httpSwagger "github.com/swaggo/http-swagger"
+	_ "casino-hub/backend/docs"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -21,17 +18,12 @@ import (
 
 // @title Casino Hub API
 // @version 1.0
-// @description Simple casino games backend in Go with MySQL
+// @description Simple casino games backend in Go with PostgreSQL
 // @host localhost:8080
 // @BasePath /
 func main() {
-	err := godotenv.Load()
-    if err != nil {
-        log.Println("Error loading .env file")
-    }
-	// Init DB
-	database.InitDB()
-	defer database.DB.Close()
+	// Initialize DB with retry (handles temporary connection issues)
+	database.InitDBWithRetry(5, 3)
 
 	// Router
 	r := mux.NewRouter()
@@ -48,12 +40,14 @@ func main() {
 		AllowCredentials: true,
 	})
 
-	// Start server
 	handler := c.Handler(r)
+
+	// Render provides the PORT dynamically
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" 
+		port = "8080"
 	}
-	fmt.Printf("🎰 Casino API Server running on %s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, handler)) 
+
+	fmt.Printf("🎰 Casino API Server running on port %s\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
