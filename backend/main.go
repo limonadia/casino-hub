@@ -55,5 +55,5 @@ func main() {
 		port = "8080" 
 	}
 	fmt.Printf("🎰 Casino API Server running on %s\n", port)
-	log.Fatal(http.ListenAndServe(port, handler))
+	log.Fatal(http.ListenAndServe(":"+port, handler)) 
 }
