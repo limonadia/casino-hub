@@ -27,9 +27,8 @@ func main() {
 
 	// Router
 	r := mux.NewRouter()
-	api := r.PathPrefix("/api/v1").Subrouter()
-	routes.RegisterRoutes(api)
-	
+	routes.RegisterRoutes(r)
+
 	// Swagger
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
