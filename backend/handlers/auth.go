@@ -52,7 +52,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var exists int
-	err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE username=? OR email=?", user.Username, user.Email).Scan(&exists)
+	err := database.DB.QueryRow("SELECT COUNT(*) FROM users WHERE username=$1 OR email=$2", user.Username, user.Email).Scan(&exists)
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -69,9 +69,10 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := database.DB.Exec(
-		"INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES (?, ?, ?, 5000, 0, 1, 0, 0)",
+		"INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES ($1, $2, $3, 5000, 0, 1, 0, 0)",
 		user.Username, user.Email, string(hashed),
 	)
+	
 	if err != nil {
 		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
 		return

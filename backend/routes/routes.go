@@ -25,10 +25,9 @@ func RegisterRoutes(r *mux.Router) {
 
 
 	//Balance
-	balance := r.PathPrefix("/api/v1").Subrouter()
-	balance.Use(handlers.AuthMiddleWare)
-	balance.HandleFunc("/balance", handlers.GetBalance).Methods("GET")
-	balance.HandleFunc("/balance", handlers.UpdateBalance).Methods("PUT")
+	api.Use(handlers.AuthMiddleWare)
+	api.HandleFunc("/balance", handlers.GetBalance).Methods("GET")
+	api.HandleFunc("/balance", handlers.UpdateBalance).Methods("PUT")
 
     // protected user routes
     user := api.PathPrefix("/users").Subrouter()
