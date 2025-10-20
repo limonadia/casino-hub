@@ -9,8 +9,10 @@ import (
 	"casino-hub/backend/database"
 	"casino-hub/backend/routes"
 
-	httpSwagger "github.com/swaggo/http-swagger"
 	_ "casino-hub/backend/docs"
+
+	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -23,6 +25,7 @@ import (
 // @BasePath /
 func main() {
 	// Initialize DB with retry (handles temporary connection issues)
+	godotenv.Load()
 	database.InitDBWithRetry(5, 3)
 
 	// Router
