@@ -30,7 +30,7 @@ func SpinRoulette(w http.ResponseWriter, r *http.Request){
 	}
 
 	var balance float64 
-	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&balance)
+	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&balance)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "User not found", http.StatusNotFound)
@@ -55,7 +55,7 @@ func SpinRoulette(w http.ResponseWriter, r *http.Request){
 		balance += float64(payout + req.Stake)
 	}
 
-	_, err = database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", balance, userID)
+	_, err = database.DB.Exec("UPDATE users SET balance = $1 WHERE id = $2", balance, userID)
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return

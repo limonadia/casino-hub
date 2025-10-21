@@ -46,7 +46,7 @@ func ClaimDailyCash(w http.ResponseWriter, r *http.Request) {
 	err := database.DB.QueryRow(`
 		SELECT last_cash_claim, balance
 		FROM users
-		WHERE id = ?
+		WHERE id = $1
 	`, userID).Scan(&lastClaim, &balance)
 	if err != nil {
 		http.Error(w, "Failed to fetch user", http.StatusInternalServerError)
@@ -62,8 +62,8 @@ func ClaimDailyCash(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	_, err = database.DB.Exec(`
 		UPDATE users
-		SET balance = ?, last_cash_claim = ?
-		WHERE id = ?
+		SET balance = $1, last_cash_claim = $2
+		WHERE id = $3
 	`, newBalance, now, userID)
 	if err != nil {
 		http.Error(w, "Failed to update user", http.StatusInternalServerError)
@@ -91,7 +91,7 @@ func SpinWheel(w http.ResponseWriter, r *http.Request) {
 	err := database.DB.QueryRow(`
 		SELECT last_wheel_spin, balance, free_games
 		FROM users
-		WHERE id = ?
+		WHERE id = $1
 	`, userID).Scan(&lastSpin, &balance, &freeGamesSQL)
 
 	freeGamesJSON := ""
@@ -150,8 +150,8 @@ func SpinWheel(w http.ResponseWriter, r *http.Request) {
 
 	_, err = database.DB.Exec(`
 		UPDATE users
-		SET balance = ?, last_wheel_spin = ?, free_games = ?
-		WHERE id = ?
+		SET balance = $1, last_wheel_spin = $2, free_games = $3
+		WHERE id = $4
 	`, newBalance, spinTime, toJSON(newFreeGames), userID)
 
 	if err != nil {

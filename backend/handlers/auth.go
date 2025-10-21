@@ -69,7 +69,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := database.DB.Exec(
-		"INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES ($1, $2, $3, 5000, 0, 1, 0, 0)",
+		"INSERT INTO users (username, email, password, balance, score, level, experience, freeSpins) VALUES ($1, $2, $3, 5000, 0, 1, 0, 0) RETURNING id",
 		user.Username, user.Email, string(hashed),
 	)
 	
@@ -113,7 +113,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user models.User
-	row := database.DB.QueryRow("SELECT id, password FROM users WHERE email = ?", creds.Email)
+	row := database.DB.QueryRow("SELECT id, password FROM users WHERE email = $1", creds.Email)
 	if err := row.Scan(&user.ID, &user.Password); err != nil {
 		log.Println("Login failed: user not found for email:", creds.Email)
 		http.Error(w, "Email does not exist", http.StatusNotFound)
@@ -210,7 +210,7 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 		SELECT 
 			id, username, email, name, balance, score, level, experience, freeSpins, 
 			lastActive, created_at, last_free_coins, last_cash_claim, last_wheel_spin, free_games
-		FROM users WHERE id = ?`, userID).Scan(
+		FROM users WHERE id = $1`, userID).Scan(
 		&user.ID,
 		&user.Username,
 		&user.Email,
@@ -256,7 +256,7 @@ func GetProfile(w http.ResponseWriter, r *http.Request) {
 
 
 	rows, err := database.DB.Query(
-		`SELECT game_name FROM user_favourites WHERE user_id = ?`,
+		`SELECT game_name FROM user_favourites WHERE user_id = $1`,
 		userID,
 	)
 	if err != nil {
@@ -350,14 +350,14 @@ func UpdateProfile(w http.ResponseWriter, r *http.Request) {
         hashedPassword = string(hash)
     }
 
-    query := "UPDATE users SET username=?, name=?, email=?"
+    query := "UPDATE users SET username=$1, name=$2, email=$3"
     args := []interface{}{updates.Username, updates.Name, updates.Email}
 
     if hashedPassword != "" {
-        query += ", password=?"
+        query += ", password=$1"
         args = append(args, hashedPassword)
     }
-    query += " WHERE id=?"
+    query += " WHERE id=$1"
     args = append(args, userID)
 
     _, err := database.DB.Exec(query, args...)
@@ -393,7 +393,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 	// check if user exists
 	var userID int
-	err := database.DB.QueryRow("SELECT id FROM users WHERE email = ?", body.Email).Scan(&userID)
+	err := database.DB.QueryRow("SELECT id FROM users WHERE email = $1", body.Email).Scan(&userID)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
@@ -403,7 +403,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	resetToken := generateRandomToken(32)
 	expiry := time.Now().Add(15 * time.Minute)
 
-	_, err = database.DB.Exec("UPDATE users SET reset_token=?, reset_token_expiry=? WHERE id=?", resetToken, expiry, userID)
+	_, err = database.DB.Exec("UPDATE users SET reset_token=$1, reset_token_expiry=$2 WHERE id=$3", resetToken, expiry, userID)
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
@@ -441,7 +441,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	var userID int
 	var expiry time.Time
-	err := database.DB.QueryRow("SELECT id, reset_token_expiry FROM users WHERE reset_token=?", body.Token).Scan(&userID, &expiry)
+	err := database.DB.QueryRow("SELECT id, reset_token_expiry FROM users WHERE reset_token=$1", body.Token).Scan(&userID, &expiry)
 	if err != nil {
 		http.Error(w, "Invalid token", http.StatusNotFound)
 		return
@@ -458,7 +458,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = database.DB.Exec("UPDATE users SET password=?, reset_token=NULL, reset_token_expiry=NULL WHERE id=?", string(hashed), userID)
+	_, err = database.DB.Exec("UPDATE users SET password=$1, reset_token=NULL, reset_token_expiry=NULL WHERE id=$2", string(hashed), userID)
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
@@ -492,7 +492,7 @@ func ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check if user exists
 	var userID int
-	err := database.DB.QueryRow("SELECT id FROM users WHERE email = ?", req.Email).Scan(&userID)
+	err := database.DB.QueryRow("SELECT id FROM users WHERE email = $1", req.Email).Scan(&userID)
 	if err != nil {
 		http.Error(w, "Email not found", http.StatusNotFound)
 		return
@@ -508,7 +508,7 @@ func ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Optionally save token + expiration time in DB (for validation later)
 	_, err = database.DB.Exec(
-		"UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?",
+		"UPDATE users SET reset_token = $1, reset_token_expiry = $2 WHERE id = $3",
 		resetToken, time.Now().Add(1*time.Hour), userID,
 	)
 	

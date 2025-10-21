@@ -19,7 +19,7 @@ func GetRecentGames(w http.ResponseWriter, r *http.Request) {
         SELECT g.title, gp.played_at
         FROM game_plays gp
         JOIN games g ON g.id = gp.game_id
-        WHERE gp.user_id = ?
+        WHERE gp.user_id = $1
         AND gp.played_at = (
             SELECT MAX(played_at) 
             FROM game_plays 

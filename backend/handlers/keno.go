@@ -29,7 +29,7 @@ func PlayKeno(w http.ResponseWriter, r *http.Request){
 	}
 
 	var balance int 
-	err := database.DB.QueryRow("SELECT balance FROm users WHERE id = ?", userID).Scan(&balance)
+	err := database.DB.QueryRow("SELECT balance FROm users WHERE id = $1", userID).Scan(&balance)
 	if err != nil{
 		http.Error(w, "Could not fetch balance", http.StatusInternalServerError)
 		return
@@ -39,7 +39,7 @@ func PlayKeno(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	_, err = database.DB.Exec("UPDATE users SET balance = balance - ? WHERE id=?", req.Bet, userID)
+	_, err = database.DB.Exec("UPDATE users SET balance = balance - $1 WHERE id=$2", req.Bet, userID)
 	if err != nil {
 		http.Error(w, "Could not deduct bet", http.StatusInternalServerError)
 		return
@@ -82,13 +82,13 @@ func PlayKeno(w http.ResponseWriter, r *http.Request){
 		jackpotWon = true
 	}
 
-	_, err = database.DB.Exec("UPDATE users SET balance = balance + ? WHERE id=?", payout, userID)
+	_, err = database.DB.Exec("UPDATE users SET balance = balance + $1 WHERE id=$2", payout, userID)
 	if err != nil {
 		http.Error(w, "Could not update balance", http.StatusInternalServerError)
 		return
 	}
 
-	err = database.DB.QueryRow("SELECT balance FROM users WHERE id=?", userID).Scan(&balance)
+	err = database.DB.QueryRow("SELECT balance FROM users WHERE id=$1", userID).Scan(&balance)
 	if err != nil {
 		http.Error(w, "Could not fetch balance", http.StatusInternalServerError)
 		return

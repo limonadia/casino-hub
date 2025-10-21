@@ -20,7 +20,7 @@ func GetBalance (w http.ResponseWriter, r *http.Request){
     userID, _ := strconv.Atoi(userIDStr)
 
     var balance int 
-    err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&balance)
+    err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&balance)
     if err != nil {
         http.Error(w, "User not found", http.StatusNotFound)
         return
@@ -60,7 +60,7 @@ func UpdateBalance(w http.ResponseWriter, r *http.Request) {
 
     // Safely update balance in DB (no negative balances)
     _, err := database.DB.Exec(
-        "UPDATE users SET balance = GREATEST(balance + ?, 0) WHERE id = ?",
+        "UPDATE users SET balance = GREATEST(balance + $1, 0) WHERE id = $2",
         req.Amount, userID,
     )
     if err != nil {
@@ -70,7 +70,7 @@ func UpdateBalance(w http.ResponseWriter, r *http.Request) {
 
     // Fetch the updated balance
     var newBalance int
-    err = database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&newBalance)
+    err = database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&newBalance)
     if err != nil {
         http.Error(w, "Could not fetch updated balance", http.StatusInternalServerError)
         return

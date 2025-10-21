@@ -13,13 +13,13 @@ import (
 
 func RecordGamePlay(userID int, gameTitle string) error {
     var gameID int
-    err := database.DB.QueryRow("SELECT id FROM games WHERE title = ?", gameTitle).Scan(&gameID)
+    err := database.DB.QueryRow("SELECT id FROM games WHERE title = $1", gameTitle).Scan(&gameID)
     if err != nil {
         return err
     }
 
     _, err = database.DB.Exec(
-        "INSERT INTO game_plays (user_id, game_id, played_at) VALUES (?, ?, ?)",
+        "INSERT INTO game_plays (user_id, game_id, played_at) VALUES ($1, $2, $3)",
         userID, gameID, time.Now(),
     )
     return err
@@ -49,7 +49,7 @@ func SpinSlot(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	var balance int64
-	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&balance)
+	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&balance)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
@@ -64,7 +64,7 @@ func SpinSlot(w http.ResponseWriter, r *http.Request) {
 	winAmount, winType, multiplier := CalculateWin(results, req.BetAmount)
 	
 	newBalance := balance - req.BetAmount + winAmount
-	_, err = database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", newBalance, userID)
+	_, err = database.DB.Exec("UPDATE users SET balance = $1 WHERE id = $2", newBalance, userID)
 	if err != nil {
 		http.Error(w, "Could not update balance", http.StatusInternalServerError)
 		return

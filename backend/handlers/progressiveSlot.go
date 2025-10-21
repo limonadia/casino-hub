@@ -24,7 +24,7 @@ func ProgressiveSlotHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	var balance int 
-	if err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&balance); err != nil {
+	if err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&balance); err != nil {
 		http.Error(w, "Invalid bet amount", http.StatusBadRequest)
 		return
 	} 
@@ -35,7 +35,7 @@ func ProgressiveSlotHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	balance -= req.Bet
-	_, err := database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", balance, userID)
+	_, err := database.DB.Exec("UPDATE users SET balance = $1 WHERE id = $2", balance, userID)
 	if err != nil {
 		http.Error(w, "Could not update balance", http.StatusInternalServerError)
 		return
@@ -105,7 +105,7 @@ func ProgressiveSlotHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	balance += winAmount
-	_, err = database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", balance, userID)
+	_, err = database.DB.Exec("UPDATE users SET balance = $1 WHERE id = $2", balance, userID)
 	if err != nil {
 		http.Error(w, "Could not update balance", http.StatusInternalServerError)
 		return

@@ -67,7 +67,7 @@ func PlayBaccarat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userBalance int
-	if err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&userBalance); err != nil {
+	if err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&userBalance); err != nil {
 		http.Error(w, "Could not fetch user balance", http.StatusInternalServerError)
 		return
 	}

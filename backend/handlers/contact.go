@@ -24,7 +24,7 @@ func ContactHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Get user email from DB
 	var userEmail string
-	err := database.DB.QueryRow("SELECT email FROM users WHERE id = ?", userID).Scan(&userEmail)
+	err := database.DB.QueryRow("SELECT email FROM users WHERE id = $1", userID).Scan(&userEmail)
 	if err != nil {
 		http.Error(w, "Failed to get user email", http.StatusInternalServerError)
 		return

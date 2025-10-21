@@ -14,7 +14,7 @@ func RegisterUser (w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := database.DB.Exec("INSERT INTO users (username, password, balance) VALUES (?, ?, ?)", user.Username, user.Password, user.Balance)
+	_, err := database.DB.Exec("INSERT INTO users (username, password, balance) VALUES ($1, $2, $3)", user.Username, user.Password, user.Balance)
 	if err != nil {
 		http.Error(w, "DB error", http.StatusInternalServerError)
 		return

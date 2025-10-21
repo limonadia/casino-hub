@@ -32,7 +32,7 @@ func ToggleFavourite(w http.ResponseWriter, r *http.Request) {
     var exists bool
     err := database.DB.QueryRow(
         `SELECT EXISTS(
-            SELECT 1 FROM user_favourites WHERE user_id = ? AND game_name = ?
+            SELECT 1 FROM user_favourites WHERE user_id = $1 AND game_name = $2
         )`, userID, req.GameName).Scan(&exists)
 
     if err != nil {
@@ -44,14 +44,14 @@ func ToggleFavourite(w http.ResponseWriter, r *http.Request) {
     if exists {
         // Remove it
         _, err = database.DB.Exec(
-            `DELETE FROM user_favourites WHERE user_id = ? AND game_name = ?`,
+            `DELETE FROM user_favourites WHERE user_id = $1 AND game_name = $2`,
             userID, req.GameName,
         )
         status = "removed"
     } else {
         // Add it
         _, err = database.DB.Exec(
-            `INSERT INTO user_favourites (user_id, game_name) VALUES (?, ?)`,
+            `INSERT INTO user_favourites (user_id, game_name) VALUES ($1, $2)`,
             userID, req.GameName,
         )
         status = "added"

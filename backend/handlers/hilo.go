@@ -57,7 +57,7 @@ func PlayHiLo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var balance, streak int
-	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&balance)
+	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&balance)
 	if err != nil {
 		http.Error(w, "Failed to fetch user", http.StatusInternalServerError)
 		return
@@ -103,7 +103,7 @@ func PlayHiLo(w http.ResponseWriter, r *http.Request) {
 		streak = 0
 	}
 
-	_, err = database.DB.Exec("UPDATE users SET balance = ? WHERE id = ?", balance, userID)
+	_, err = database.DB.Exec("UPDATE users SET balance = $1 WHERE id = $2", balance, userID)
 	if err != nil {
 		http.Error(w, "Failed to update balance", http.StatusInternalServerError)
 		return

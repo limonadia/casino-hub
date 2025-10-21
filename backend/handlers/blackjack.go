@@ -79,7 +79,7 @@ func StartGameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userBalance int
-	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = ?", userID).Scan(&userBalance)
+	err := database.DB.QueryRow("SELECT balance FROM users WHERE id = $1", userID).Scan(&userBalance)
 	if err != nil {
 		http.Error(w, "Could not fetch user balance", http.StatusInternalServerError)
 		return
@@ -318,7 +318,7 @@ func StandLogic(deck []models.Card, playerCards []models.Card, dealerCards []mod
 
 func UpdateUserBalance(userID int, amount int) error {
 	_, err := database.DB.Exec(
-		"UPDATE users SET balance = GREATEST(balance + ?, 0) WHERE id = ?",
+		"UPDATE users SET balance = GREATEST(balance + $1, 0) WHERE id = $2",
 		amount, userID,
 	)
 	return err
@@ -327,7 +327,7 @@ func UpdateUserBalance(userID int, amount int) error {
 // New function to set balance to absolute value
 func UpdateUserBalanceAbsolute(userID int, newBalance int) error {
 	_, err := database.DB.Exec(
-		"UPDATE users SET balance = GREATEST(?, 0) WHERE id = ?",
+		"UPDATE users SET balance = GREATEST($1, 0) WHERE id = $2",
 		newBalance, userID,
 	)
 	return err
