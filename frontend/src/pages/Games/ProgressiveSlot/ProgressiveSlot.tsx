@@ -57,10 +57,6 @@ const PremiumSlotMachine = () => {
   const [showWinAnimation, setShowWinAnimation] = useState(false);
   const { t } = useTranslation();
 
-  const playSound = (type: string) => {
-    console.log(`Playing ${type} sound`);
-  };
-
   const spinReels = async () => {
     if (!token || isSpinning || balance < bet) return;
     setShowWinAnimation(false);

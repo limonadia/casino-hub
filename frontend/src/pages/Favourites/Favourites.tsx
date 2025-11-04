@@ -1,5 +1,4 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
 import { useAuth } from '../../services/authContext';
 import { useEffect, useState } from 'react';
 import GameCard from '../../components/GameCard/GameCard';
@@ -23,7 +22,8 @@ function Favourites() {
   useEffect(() => {
     if (user && user.favourites) {
       const filtered = gamesData.filter((game) =>
-        user.favourites.includes(game.title)
+        user.favourites ?
+        user.favourites.includes(game.title) : ''
       );
       setFavourites(filtered);
     }

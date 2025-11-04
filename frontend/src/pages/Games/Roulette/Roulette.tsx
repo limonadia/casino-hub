@@ -103,28 +103,6 @@ export default function RouletteWheel() {
   async function serverSpin(bet: BetType | null, stake: number) {
     if (!bet) return null;
   
-    let type: BetEnum;
-    let value: number | string;
-  
-    if (bet.kind === 'number') {
-      type = BetEnum.Number;
-      value = bet.value;
-    } else if (bet.kind === 'color') {
-      type = BetEnum.Color;
-      value = bet.value;
-    } else if (bet.kind === 'parity') {
-      type = BetEnum.OddEven;
-      value = bet.value;
-    } else if (bet.kind === 'dozen') {
-      type = BetEnum.Dozen;
-      value = bet.value;
-    } else if (bet.kind === 'column') {
-      type = BetEnum.Column;
-      value = bet.value;
-    } else {
-      return null;
-    }
-  
     return await rouletteService.spin(bet, stake);
   }
 
@@ -190,10 +168,8 @@ function animateToWinning(winningIndex: number) {
 
     const serverResult: any = await serverSpin(selectedBet, stake);
     let winningNumber: number;
-    let serverPayout = 0;
     if (serverResult && typeof serverResult.winningNumber === 'number') {
       winningNumber = serverResult.winningNumber;
-      serverPayout = serverResult.payout || 0;
     } else {
       const index = Math.floor(Math.random() * POCKETS.length);
       winningNumber = POCKETS[index].n;
