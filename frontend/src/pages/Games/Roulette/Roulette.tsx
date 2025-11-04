@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../../services/authContext';
-import { BetEnum, rouletteService, type BetType } from '../../../services/rouletteService';
+import { rouletteService, type BetType } from '../../../services/rouletteService';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
