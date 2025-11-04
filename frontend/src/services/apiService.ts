@@ -8,7 +8,7 @@ export interface ApiServiceOptions {
     protected defaultHeaders: Record<string, string>;
   
     constructor(options?: ApiServiceOptions) {
-      this.baseURL = options?.baseURL || "https://casino-hub-production.up.railway.app/";
+      this.baseURL = options?.baseURL || "https://casino-hub-production.up.railway.app/api/v1";
       this.defaultHeaders = options?.defaultHeaders || {
         "Content-Type": "application/json",
       };
