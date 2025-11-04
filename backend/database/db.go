@@ -2,7 +2,9 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -11,7 +13,16 @@ var DB *sql.DB
 
 func InitDB() {
 	var err error
-	dsn := "casino_user:password123@tcp(127.0.0.1:3306)/casino_hub?parseTime=true"
+
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		os.Getenv("MYSQLUSER"),
+		os.Getenv("MYSQLPASSWORD"),
+		os.Getenv("MYSQLHOST"),
+		os.Getenv("MYSQLPORT"),
+		os.Getenv("MYSQLDATABASE"),
+	)
+
 	DB, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
