@@ -16,11 +16,11 @@ func InitDB() {
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		os.Getenv("MYSQLUSER"),
-		os.Getenv("MYSQLPASSWORD"),
-		os.Getenv("MYSQLHOST"),
-		os.Getenv("MYSQLPORT"),
-		os.Getenv("MYSQL_DATABASE"),
+		os.Getenv("MYSQLUSER"),             
+		os.Getenv("MYSQL_ROOT_PASSWORD"),   
+		os.Getenv("MYSQLHOST"),            
+		os.Getenv("MYSQLPORT"),           
+		os.Getenv("MYSQL_DATABASE"),     
 	)
 
 	DB, err = sql.Open("mysql", dsn)
