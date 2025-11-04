@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"casino-hub/backend/database"
 	"casino-hub/backend/routes"
+
 	"github.com/joho/godotenv"
 
-	httpSwagger "github.com/swaggo/http-swagger"
 	_ "casino-hub/backend/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -47,7 +50,13 @@ func main() {
 
 	// Start server
 	handler := c.Handler(r)
-	port := ":8080"
+	
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" 
+	}
+
+
 	fmt.Printf("🎰 Casino API Server running on %s\n", port)
 	log.Fatal(http.ListenAndServe(port, handler))
 }
