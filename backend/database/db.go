@@ -20,7 +20,7 @@ func InitDB() {
 		os.Getenv("MYSQLPASSWORD"),
 		os.Getenv("MYSQLHOST"),
 		os.Getenv("MYSQLPORT"),
-		os.Getenv("MYSQLDATABASE"),
+		os.Getenv("MYSQL_DATABASE"),
 	)
 
 	DB, err = sql.Open("mysql", dsn)
